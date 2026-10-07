@@ -18,6 +18,10 @@ Pinned R1 commit `9acd25a4673facf2b3cca2467142987548949ce3` (R1 repository versi
 - Documentation: README, formulas, import guide, architecture, workbook guide, data dictionary, Starter Mode, event-capture model, export model, practical workflow, portfolio integration.
 - Tests and verification records.
 
+### Fixed
+
+- Reproducible build depended on whether the optional lxml package was installed: openpyxl writes XML differently with lxml, so CI (without lxml) rebuilt different bytes. The builder now always uses openpyxl's standard XML writer and refuses to build if lxml serialization is active. Regression test: `test_build_does_not_depend_on_optional_lxml`.
+
 ### Not yet included
 
 - R4-owned tabs (curriculum, deliverables, training roster, proficiency) and scenario-pack tabs (cutover runbook, command center), planned for version 0.2 after their owning repositories exist. No release or tag exists yet.

@@ -7,9 +7,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from openpyxl import load_workbook
+from support import B, ROOT, Sandbox, W, reset_root  # isort: skip  (must precede openpyxl)
 
-from support import B, ROOT, Sandbox, W, reset_root
+from openpyxl import load_workbook  # noqa: E402
 
 import sync_r1_contracts as S  # noqa: E402
 import verify_workbook as V  # noqa: E402
@@ -28,6 +28,20 @@ class Builder(unittest.TestCase):
             B.build(b)
             self.assertTrue(filecmp.cmp(a, b, shallow=False), "two builds differ")
             self.assertTrue(filecmp.cmp(a, W.WORKBOOK_PATH, shallow=False), "the committed workbook is not the build output")
+
+    def test_build_does_not_depend_on_optional_lxml(self) -> None:
+        # Regression: CI (no lxml) produced different bytes than a machine with lxml,
+        # because openpyxl switches XML writers when lxml is installed.
+        import openpyxl.xml
+
+        self.assertFalse(openpyxl.xml.LXML, "the standard XML writer must be in effect")
+        original = B.openpyxl_xml.LXML
+        try:
+            B.openpyxl_xml.LXML = True
+            with tempfile.TemporaryDirectory() as tmp, self.assertRaises(RuntimeError):
+                B.build(Path(tmp) / "x.xlsx")
+        finally:
+            B.openpyxl_xml.LXML = original
 
     def test_twelve_visible_sheets_in_order(self) -> None:
         wb = load_workbook(W.WORKBOOK_PATH)

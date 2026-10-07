@@ -12,6 +12,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
+# Test modules import support before openpyxl, so the builder's standard XML writer
+# is in effect even when the optional lxml package is installed.
+os.environ["OPENPYXL_LXML"] = "False"
 
 import build_workbook as B  # noqa: E402,F401
 import reference_model as RM  # noqa: E402,F401

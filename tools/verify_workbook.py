@@ -32,11 +32,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import build_workbook as B  # noqa: E402  (first: it selects openpyxl's standard XML writer)
 import yaml  # noqa: E402
 from jsonschema import Draft202012Validator  # noqa: E402
 from openpyxl import load_workbook  # noqa: E402
 
-import build_workbook as B  # noqa: E402
 import reference_model as RM  # noqa: E402
 import workbook_spec as W  # noqa: E402
 

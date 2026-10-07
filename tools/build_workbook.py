@@ -21,6 +21,7 @@ import argparse
 import csv
 import io
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -32,6 +33,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+# openpyxl serializes XML differently when the optional lxml package is installed.
+# The builder always uses openpyxl's standard writer, so the bytes do not depend on
+# whether lxml happens to be present. build() refuses to run if this did not take effect.
+os.environ["OPENPYXL_LXML"] = "False"
+
+import openpyxl.xml as openpyxl_xml  # noqa: E402
 from openpyxl import Workbook, load_workbook  # noqa: E402
 from openpyxl.chart import BarChart, Reference  # noqa: E402
 from openpyxl.formatting.rule import FormulaRule  # noqa: E402
@@ -198,6 +205,9 @@ def add_validation(ws, column_letter: str, lookup_type: str, start: int) -> None
 
 
 def build(output: Path, inputs: dict | None = None, settings: dict | None = None) -> dict:
+    if openpyxl_xml.LXML:
+        raise RuntimeError("openpyxl was imported with lxml serialization enabled; set OPENPYXL_LXML=False "
+                           "before importing openpyxl so the build is byte-reproducible")
     ctx = RM.initial_context(inputs, settings)
     specs = W.tables()
     st = ctx["settings"]

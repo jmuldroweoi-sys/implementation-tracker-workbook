@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       R3_REQUIRE_RECALC: "1"
+      OPENPYXL_LXML: "False"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

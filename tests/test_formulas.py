@@ -11,9 +11,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from openpyxl import load_workbook
+from support import B, RM, W, needs_libreoffice, reset_root  # isort: skip  (must precede openpyxl)
 
-from support import B, RM, W, needs_libreoffice, reset_root
+from openpyxl import load_workbook  # noqa: E402
 
 AS_OF = "2026-10-05T23:59:59Z"
 
