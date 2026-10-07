@@ -1,18 +1,18 @@
 # Release gate
 
-**This repository is not authorized for public release.** Explicit human publication approval is still required.
+**Released publicly on 2026-10-07 as version 0.1.0 (tag `v0.1.0`)**, after a signed human review and the author's explicit publication approval.
 
 | Item | Status |
 |---|---|
 | Repository | implementation-tracker-workbook |
-| Visibility | Private |
-| Workbook version | 0.1.0, pre-release, not tagged |
+| Visibility | Public (from 2026-10-07) |
+| Workbook version | 0.1.0, released 2026-10-07, tag `v0.1.0` |
 | Pinned R1 | commit `9acd25a4673facf2b3cca2467142987548949ce3`, repository version 0.1.0, shared standard 1.0.0 |
 | Private build verification (2026-10-06) | PASS: validator 38 of 38, workbook verifier 15 of 15 with LibreOffice recalculation, full test suite passing |
 | Publication gate, pre-release profile (2026-10-06) | PASS with 0 failures, using a temporary private term list kept outside every repository. Expected warnings only: no private source fingerprints configured in this build environment, and the human review below is not signed |
 | Publication gate, strict profile (2026-10-07) | Run with the private blocklist (193 terms) and private source fingerprints (6,856 shingles), both kept outside every repository: 0 blocklist hits, 0 fingerprint matches, every public-safety rule passing. The only open item at that run was the human review, signed below on the same day |
 | Human release review | Signed PASS by Jared Muldrow, 2026-10-07 (see Human review below) |
-| Publication approval | None |
+| Publication approval | Given by Jared Muldrow in writing, 2026-10-07 |
 
 ## Public-safety checklist
 

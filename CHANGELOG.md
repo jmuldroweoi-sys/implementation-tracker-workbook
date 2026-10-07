@@ -2,7 +2,7 @@
 
 This file tracks the workbook (R3) version. The pinned R1 commit and shared-standard version are stated in each entry and in `standard/standard-reference.yaml`.
 
-## [0.1.0] Unreleased (pre-release, not tagged)
+## [0.1.0] 2026-10-07
 
 Pinned R1 commit `9acd25a4673facf2b3cca2467142987548949ce3` (R1 repository version 0.1.0). Shared standard 1.0.0.
 
@@ -30,4 +30,4 @@ Pinned R1 commit `9acd25a4673facf2b3cca2467142987548949ce3` (R1 repository versi
 
 ### Not yet included
 
-- R4-owned tabs (curriculum, deliverables, training roster, proficiency) and scenario-pack tabs (cutover runbook, command center), planned for version 0.2 after their owning repositories exist. No release or tag exists yet.
+- R4-owned tabs (curriculum, deliverables, training roster, proficiency) and scenario-pack tabs (cutover runbook, command center), planned for version 0.2 after their owning repositories exist.

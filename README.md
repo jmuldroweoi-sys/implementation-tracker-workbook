@@ -2,7 +2,7 @@
 
 A macro-free implementation tracker that applies the R1 operating model through deterministic spreadsheet formulas, synthetic data, and portable exports. One implementation professional can open one workbook and run implementation work with the R1 lifecycle, schemas, rules, and event contract.
 
-> **Status: version 0.1.0, pre-release, not tagged.** This is a reference implementation of R1 ([`implementation-operating-system`](https://github.com/jmuldroweoi-sys/implementation-operating-system)), pinned in [`standard/standard-reference.yaml`](standard/standard-reference.yaml). It has not been historically deployed as this exact workbook. The bundled synthetic examples are not customer data, and nothing here reports a measured result.
+> **Status: version 0.1.0, released 2026-10-07 (tag `v0.1.0`).** This is a reference implementation of R1 ([`implementation-operating-system`](https://github.com/jmuldroweoi-sys/implementation-operating-system)), pinned in [`standard/standard-reference.yaml`](standard/standard-reference.yaml). It has not been historically deployed as this exact workbook. The bundled synthetic examples are not customer data, and nothing here reports a measured result.
 
 R1 answers *what operating model implementation work should follow*. This workbook answers *how one implementation professional can run that model today*: open one file, update the rows that changed this week, and read what is late, blocked, risky, or not ready.
 
@@ -32,7 +32,7 @@ Designed and maintained by Jared Muldrow, an implementation and onboarding profe
 
 R1 owns the lifecycle, phase and gate vocabulary, project, task, request, handoff, risk, and issue statuses, request transitions, severities, the risk formula, readiness categories and weights, SLA and lead-time parameters, and the event catalog. This workbook (R3) owns only the workbook structure, the formulas that implement R1, check columns, imports and exports, workbook metadata, and the Capacity Inputs export format.
 
-The pin is in [`standard/standard-reference.yaml`](standard/standard-reference.yaml): R1 commit `9acd25a4673facf2b3cca2467142987548949ce3` (repository version 0.1.0), shared standard 1.0.0. The R1 files the workbook needs are byte-identical copies under [`schemas/r1/`](schemas/r1/manifest.yaml) and [`data/synthetic/r1/`](data/synthetic/manifest.yaml), each with a SHA-256. [`tools/sync_r1_contracts.py`](tools/sync_r1_contracts.py) changes the pin only from an explicitly named R1 commit, never from "latest". If R1 changes, R3 is rebuilt and revalidated against the new pin. See [docs/architecture.md](docs/architecture.md).
+The pin is in [`standard/standard-reference.yaml`](standard/standard-reference.yaml): R1 commit `9acd25a4673facf2b3cca2467142987548949ce3` (repository version 0.1.0), shared standard 1.0.0. R1's `v0.1.0` release contains the same pinned files byte for byte; its later 0.1.0 commits changed only documentation and validator tooling. The R1 files the workbook needs are byte-identical copies under [`schemas/r1/`](schemas/r1/manifest.yaml) and [`data/synthetic/r1/`](data/synthetic/manifest.yaml), each with a SHA-256. [`tools/sync_r1_contracts.py`](tools/sync_r1_contracts.py) changes the pin only from an explicitly named R1 commit, never from "latest". If R1 changes, R3 is rebuilt and revalidated against the new pin. See [docs/architecture.md](docs/architecture.md).
 
 ## Workbook screenshot and visual description
 
@@ -165,7 +165,7 @@ AI assisted with this repository: Claude (Anthropic) helped structure the docume
 
 | Version | Value |
 |---|---|
-| Workbook (R3) | 0.1.0, pre-release, not tagged (`CHANGELOG.md`) |
+| Workbook (R3) | 0.1.0, released 2026-10-07, tag `v0.1.0` (`CHANGELOG.md`) |
 | Pinned R1 | commit `9acd25a`, repository version 0.1.0 |
 | Shared standard | 1.0.0 |
 | R1 record schemas | 0.1.0 |
