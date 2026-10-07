@@ -10,8 +10,8 @@
 | Pinned R1 | commit `9acd25a4673facf2b3cca2467142987548949ce3`, repository version 0.1.0, shared standard 1.0.0 |
 | Private build verification (2026-10-06) | PASS: validator 38 of 38, workbook verifier 15 of 15 with LibreOffice recalculation, full test suite passing |
 | Publication gate, pre-release profile (2026-10-06) | PASS with 0 failures, using a temporary private term list kept outside every repository. Expected warnings only: no private source fingerprints configured in this build environment, and the human review below is not signed |
-| Publication gate, strict profile (2026-10-07) | Run with the private blocklist (193 terms) and private source fingerprints (6,856 shingles), both kept outside every repository: 0 blocklist hits, 0 fingerprint matches, every public-safety rule passing. The only failure is the unsigned human review below, which is the author's decision, not a technical failure |
-| Human release review | Pending: the author (see Human review below) |
+| Publication gate, strict profile (2026-10-07) | Run with the private blocklist (193 terms) and private source fingerprints (6,856 shingles), both kept outside every repository: 0 blocklist hits, 0 fingerprint matches, every public-safety rule passing. The only open item at that run was the human review, signed below on the same day |
+| Human release review | Signed PASS by Jared Muldrow, 2026-10-07 (see Human review below) |
 | Publication approval | None |
 
 ## Public-safety checklist
@@ -39,4 +39,10 @@ No release, tag, or visibility change happens before all four.
 
 ## Human review
 
-Not signed yet. The author signs after reviewing the repository by adding three lines to this section, each on its own line: `Reviewer:` with the reviewer's name, `Date:` with the review date, and `Verdict:` with PASS or FAIL. Publication still needs the author's separate explicit approval after that.
+Signed by the author in writing on 2026-10-07 ("Signed: R1 and R3 release review PASS, October 7, 2026"), covering this repository and its companion as one pair, and recorded here at the author's instruction.
+
+- Reviewer: Jared Muldrow
+- Date: 2026-10-07
+- Verdict: PASS
+
+The signed review is not publication approval. Making the repository public and creating its release tag each need the author's separate explicit approval.
