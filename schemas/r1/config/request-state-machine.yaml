@@ -1,0 +1,117 @@
+# Request state machine. This file is the single authority for request statuses and
+# legal transitions. The status enum in schemas/request.schema.json must equal
+# `statuses` below, and tools/validate.py checks that they match. Prose elsewhere
+# describes this file; it never overrides it.
+# performed_by names who makes the move: the role in the request's owner_role_id
+# (owner), the role that receives a handoff (receiving_role), or a named human
+# approver recorded in an approval record (approver). No AI moves a request.
+standard_version: "1.0.0"
+core_version: "0.1.0"
+entity: request
+initial_status: submitted
+initial_event: request.submitted
+terminal_statuses: [closed]
+statuses: [submitted, triaged, awaiting_approval, accepted, in_progress, blocked, ready_for_handoff, handed_off, closed]
+transition_event: request.status_changed
+escalation_note: >-
+  Escalation is not a status. When a timer in config/sla-rules.yaml expires for the
+  request's current status, that rule emits request.escalated to its escalation role.
+  The request keeps its status.
+
+transitions:
+  - from_status: submitted
+    to_status: triaged
+    performed_by: owner
+    human_action_required: false
+    requirements: ["request_type, priority, and owner_role_id are set"]
+    emitted_event: request.status_changed
+  - from_status: submitted
+    to_status: closed
+    performed_by: owner
+    human_action_required: true
+    requirements: ["a reason is recorded (duplicate, withdrawn, or out of scope)"]
+    emitted_event: request.status_changed
+  - from_status: triaged
+    to_status: awaiting_approval
+    performed_by: owner
+    human_action_required: false
+    requirements: ["the request needs a decision from a named approver, such as a change to agreed scope or design"]
+    emitted_event: request.status_changed
+  - from_status: triaged
+    to_status: accepted
+    performed_by: owner
+    human_action_required: false
+    requirements: ["no approval is needed, and due_at is set"]
+    emitted_event: request.status_changed
+  - from_status: triaged
+    to_status: closed
+    performed_by: owner
+    human_action_required: true
+    requirements: ["a reason is recorded"]
+    emitted_event: request.status_changed
+  - from_status: awaiting_approval
+    to_status: accepted
+    performed_by: approver
+    human_action_required: true
+    requirements: ["an approval record (APR) with decision approved, made by a named person (PER)"]
+    emitted_event: request.status_changed
+  - from_status: awaiting_approval
+    to_status: closed
+    performed_by: approver
+    human_action_required: true
+    requirements: ["an approval record (APR) with decision rejected, made by a named person (PER)"]
+    emitted_event: request.status_changed
+  - from_status: accepted
+    to_status: in_progress
+    performed_by: owner
+    human_action_required: false
+    requirements: ["work has started"]
+    emitted_event: request.status_changed
+  - from_status: in_progress
+    to_status: blocked
+    performed_by: owner
+    human_action_required: false
+    requirements: ["the blocker and the role that can clear it are recorded as the reason"]
+    emitted_event: request.status_changed
+  - from_status: in_progress
+    to_status: ready_for_handoff
+    performed_by: owner
+    human_action_required: false
+    requirements: ["the work is done and the receiving role is named"]
+    emitted_event: request.status_changed
+  - from_status: in_progress
+    to_status: closed
+    performed_by: owner
+    human_action_required: false
+    requirements: ["the work is done and no handoff is needed"]
+    emitted_event: request.status_changed
+  - from_status: blocked
+    to_status: in_progress
+    performed_by: owner
+    human_action_required: false
+    requirements: ["the blocker is cleared"]
+    emitted_event: request.status_changed
+  - from_status: blocked
+    to_status: closed
+    performed_by: owner
+    human_action_required: true
+    requirements: ["a reason is recorded"]
+    emitted_event: request.status_changed
+  - from_status: ready_for_handoff
+    to_status: handed_off
+    performed_by: receiving_role
+    human_action_required: true
+    requirements: ["a handoff (HND) for the request is accepted by a named person in the receiving role"]
+    emitted_event: request.status_changed
+  - from_status: ready_for_handoff
+    to_status: in_progress
+    performed_by: owner
+    human_action_required: false
+    requirements: ["the receiving role returned the work with a reason"]
+    emitted_event: request.status_changed
+  - from_status: handed_off
+    to_status: closed
+    performed_by: receiving_role
+    human_action_required: false
+    requirements: ["the receiving role confirms the request is complete"]
+    emitted_event: request.status_changed

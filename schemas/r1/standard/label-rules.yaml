@@ -1,0 +1,84 @@
+standard_version: "1.0.0"
+description: >-
+  The four mandatory labels. Where a rule below requires a label, the exact
+  canonical text must appear. No alternative wording may substitute for it.
+  Labels are lowercase as written here; they may start a sentence with an
+  uppercase first letter only in prose.
+
+labels:
+  - id: proposed_design_value
+    label: "proposed design value, not a measured result"
+    when_required: >-
+      On every numeric default, threshold, weight, target, timer, or ratio
+      that the portfolio supplies as a design choice rather than a
+      measurement.
+    valid_locations:
+      - A comment on the same line as the value in a YAML configuration file
+      - A file header comment that covers every value in the file
+      - A column note in a data dictionary or workbook
+      - An inline statement next to the number in documentation
+    examples:
+      - "escalation_after_hours: 48  # proposed design value, not a measured result"
+      - "All weights in this file are a proposed design value, not a measured result."
+    invalid_usage:
+      - Calling a design value a benchmark, industry standard, or typical result
+      - Shortened wording such as "proposed value" or "design value"
+      - Applying the label to a measured value from a real organization (real values are never published)
+    validation_behavior: >-
+      Validators fail when a configuration file under config/ or profiles/
+      contains a numeric value and the label text does not appear in that
+      file, and when a near-variant of the label appears anywhere.
+
+  - id: synthetic_data
+    label: "synthetic data"
+    when_required: >-
+      On every dataset, export, example record set, chart, or report built
+      from generated records.
+    valid_locations:
+      - A README.md in each folder that holds synthetic datasets
+      - A header comment in a JSONL or YAML data file
+      - A caption or footer on any chart, table, or report built from the data
+    examples:
+      - "All files in this folder are synthetic data generated for illustration."
+    invalid_usage:
+      - Describing synthetic records as sample customer data or anonymized data
+      - Omitting the label from an exported copy of a synthetic dataset
+    validation_behavior: >-
+      Validators fail when a folder containing CSV or JSONL data has no
+      README.md containing the label.
+
+  - id: illustrative_example
+    label: "illustrative example"
+    when_required: >-
+      On every example that shows the shape of something but is not a
+      working default, such as an example profile, record, or template value.
+    valid_locations:
+      - A header comment in an example file
+      - A sentence directly before or after the example in documentation
+      - A description or comment on a JSON Schema example
+    examples:
+      - "# illustrative example: shows the shape of a profile, not a recommended setting"
+    invalid_usage:
+      - Presenting an example value as a recommendation
+      - Using the label on content that the system actually loads as a default
+    validation_behavior: >-
+      Validators fail when a file under an examples/ folder lacks the label.
+
+  - id: user_configurable_parameter
+    label: "user-configurable parameter"
+    when_required: >-
+      On every value a user is expected to change for their own context, such
+      as timers, thresholds, weights, working hours, and allowances.
+    valid_locations:
+      - A comment on the same line as the value in a YAML configuration file
+      - A file header comment that covers every value in the file
+      - A column note in a data dictionary or workbook
+    examples:
+      - "response_target_hours: 4  # user-configurable parameter; proposed design value, not a measured result"
+    invalid_usage:
+      - Marking a value configurable when changing it would break a shared contract
+      - Shortened wording such as "configurable" alone where the rule requires the label
+    validation_behavior: >-
+      Validators check that every value declared configurable in a
+      repository's own rules carries the label. Shared-contract values in
+      standard/ are never user-configurable.

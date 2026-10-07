@@ -1,0 +1,28 @@
+# illustrative example: shows the shape of an organization-stage profile, not a
+# recommended setting and not a default the system loads.
+# Every duration and lead time below is a proposed design value, not a measured result,
+# and a user-configurable parameter.
+# A startup keeps all ten phases and every gate. It makes waivable evidence optional,
+# records gates at lightweight formality (the owner role self-assesses against the
+# checklist and still records the outcome as a named person), and relaxes one timer.
+profile_id: PRF-000001
+profile_type: org_stage
+org_stage: startup
+name: "Organization stage: startup"
+version: "0.1.0"
+status: released
+description: "Illustrative example for one person or a few people running implementations alongside other customer work."
+required_fields: []
+gate_adjustments:
+  - {gate_id: initiate_gate, formality: lightweight, optional_evidence_types: [success_criteria, kickoff_record]}
+  - {gate_id: discover_gate, formality: lightweight, optional_evidence_types: [risk_entries]}
+  - {gate_id: design_gate, formality: lightweight}
+  - {gate_id: build_gate, formality: lightweight, optional_evidence_types: [configuration_record]}
+  - {gate_id: validate_gate, formality: lightweight, optional_evidence_types: [test_plan]}
+  - {gate_id: enable_gate, formality: lightweight, optional_evidence_types: [training_plan]}
+  - {gate_id: launch_gate, formality: lightweight}
+  - {gate_id: stabilize_gate, formality: lightweight}
+  - {gate_id: transition_gate, formality: lightweight}
+parameter_overrides:
+  - {config_file: config/sla-rules.yaml, rule_id: RUL-000001, field: target_duration, value: PT48H}  # proposed design value, not a measured result
+schema_version: "0.1.0"

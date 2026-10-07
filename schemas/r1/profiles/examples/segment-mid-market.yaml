@@ -1,0 +1,16 @@
+# illustrative example: shows the shape of a segment profile, not a recommended
+# setting and not a default the system loads.
+# This example sets no numeric value. Any value a segment profile sets is a
+# user-configurable parameter and a proposed design value, not a measured result.
+profile_id: PRF-000004
+profile_type: segment
+name: "Segment: mid-market"
+version: "0.1.0"
+status: released
+description: "Illustrative example for mid-sized customer organizations. Projects need a target launch date, and the launch gate is recorded formally by the delivery leadership role."
+required_fields:
+  - {entity: project, field: target_launch_date}
+gate_adjustments:
+  - {gate_id: launch_gate, formality: formal, approver_role: delivery_leadership}
+parameter_overrides: []
+schema_version: "0.1.0"

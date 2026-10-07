@@ -1,0 +1,129 @@
+# SLA and escalation rules.
+# Every duration in this file (target_duration and warning_offset) is a user-configurable parameter.
+# Every duration in this file is a proposed design value, not a measured result.
+# None of them is a benchmark. Durations use ISO 8601 (PT24H is 24 hours, P2D is 2 days).
+#
+# How a timer works (tools/r1_rules.py, sla_timer):
+#   starts_at  = the time the subject entered trigger.status (status_changed_at on a
+#                request; opened_at on an issue; requested_at on a handoff)
+#   due_at     = starts_at + target_duration
+#   warning_at = due_at - warning_offset
+# When due_at passes and the subject is still in trigger.status, the rule acts:
+#   escalate        emits request.escalated (requests only) to escalation_role_id
+#   notify_role     notifies escalation_role_id; standard 1.0.0 has no event for it
+#   notify_owner    reminds the owner role only; no escalation
+# A rule only times; it never changes a status. No AI starts or stops a timer.
+#
+# ROL- IDs below are the role IDs used by the synthetic data set
+# (data/synthetic/README.md). An adopting organization replaces them with its own.
+# Rule keys sev1 to sev4 are the response expectations that
+# standard/severity-scale.yaml points to.
+standard_version: "1.0.0"
+core_version: "0.1.0"
+timer_basis_values: [elapsed_calendar_time]
+action_values: [escalate, notify_role, notify_owner]
+stage_behavior_values: [optional, recommended, required]
+
+rules:
+  - rule_id: RUL-000001
+    key: request_triage
+    applies_to_entity: request
+    trigger: {status: submitted}
+    timer_basis: elapsed_calendar_time
+    target_duration: PT24H  # user-configurable parameter; proposed design value, not a measured result
+    warning_offset: PT4H  # user-configurable parameter; proposed design value, not a measured result
+    escalation_role_id: ROL-000001
+    escalation_role_key: implementation_lead
+    escalation_severity: sev3
+    action: escalate
+    enabled_flag: true
+    stage_behavior: {startup: optional, early_scale: recommended, structured_growth: required, mature: required}
+
+  - rule_id: RUL-000002
+    key: request_approval_wait
+    applies_to_entity: request
+    trigger: {status: awaiting_approval}
+    timer_basis: elapsed_calendar_time
+    target_duration: PT72H  # user-configurable parameter; proposed design value, not a measured result
+    warning_offset: PT24H  # user-configurable parameter; proposed design value, not a measured result
+    escalation_role_id: ROL-000003
+    escalation_role_key: delivery_leadership
+    escalation_severity: sev3
+    action: escalate
+    enabled_flag: true
+    stage_behavior: {startup: optional, early_scale: recommended, structured_growth: required, mature: required}
+
+  - rule_id: RUL-000003
+    key: request_blocked
+    applies_to_entity: request
+    trigger: {status: blocked}
+    timer_basis: elapsed_calendar_time
+    target_duration: PT48H  # user-configurable parameter; proposed design value, not a measured result
+    warning_offset: PT8H  # user-configurable parameter; proposed design value, not a measured result
+    escalation_role_id: ROL-000003
+    escalation_role_key: delivery_leadership
+    escalation_severity: sev2
+    action: escalate
+    enabled_flag: true
+    stage_behavior: {startup: recommended, early_scale: required, structured_growth: required, mature: required}
+
+  - rule_id: RUL-000004
+    key: handoff_acceptance
+    applies_to_entity: handoff
+    trigger: {status: requested}
+    timer_basis: elapsed_calendar_time
+    target_duration: PT72H  # user-configurable parameter; proposed design value, not a measured result
+    warning_offset: PT24H  # user-configurable parameter; proposed design value, not a measured result
+    escalation_role_id: ROL-000003
+    escalation_role_key: delivery_leadership
+    action: notify_role
+    enabled_flag: true
+    stage_behavior: {startup: optional, early_scale: recommended, structured_growth: required, mature: required}
+
+  - rule_id: RUL-000005
+    key: sev1
+    applies_to_entity: issue
+    trigger: {status: open, severity: sev1}
+    timer_basis: elapsed_calendar_time
+    target_duration: PT1H  # user-configurable parameter; proposed design value, not a measured result
+    warning_offset: PT15M  # user-configurable parameter; proposed design value, not a measured result
+    escalation_role_id: ROL-000003
+    escalation_role_key: delivery_leadership
+    action: notify_role
+    enabled_flag: true
+    stage_behavior: {startup: required, early_scale: required, structured_growth: required, mature: required}
+
+  - rule_id: RUL-000006
+    key: sev2
+    applies_to_entity: issue
+    trigger: {status: open, severity: sev2}
+    timer_basis: elapsed_calendar_time
+    target_duration: PT4H  # user-configurable parameter; proposed design value, not a measured result
+    warning_offset: PT1H  # user-configurable parameter; proposed design value, not a measured result
+    escalation_role_id: ROL-000001
+    escalation_role_key: implementation_lead
+    action: notify_role
+    enabled_flag: true
+    stage_behavior: {startup: recommended, early_scale: required, structured_growth: required, mature: required}
+
+  - rule_id: RUL-000007
+    key: sev3
+    applies_to_entity: issue
+    trigger: {status: open, severity: sev3}
+    timer_basis: elapsed_calendar_time
+    target_duration: PT24H  # user-configurable parameter; proposed design value, not a measured result
+    warning_offset: PT4H  # user-configurable parameter; proposed design value, not a measured result
+    action: notify_owner
+    enabled_flag: true
+    stage_behavior: {startup: optional, early_scale: recommended, structured_growth: required, mature: required}
+
+  - rule_id: RUL-000008
+    key: sev4
+    applies_to_entity: issue
+    trigger: {status: open, severity: sev4}
+    timer_basis: elapsed_calendar_time
+    target_duration: PT72H  # user-configurable parameter; proposed design value, not a measured result
+    warning_offset: PT24H  # user-configurable parameter; proposed design value, not a measured result
+    action: notify_owner
+    enabled_flag: true
+    stage_behavior: {startup: optional, early_scale: optional, structured_growth: recommended, mature: recommended}

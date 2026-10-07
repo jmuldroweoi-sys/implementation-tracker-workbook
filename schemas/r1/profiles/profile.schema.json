@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:implementation-operating-system:core:0.1.0:profile",
+  "title": "Configuration profile",
+  "description": "A profile (PRF) configures the same R1 model for an organization stage, a complexity tier, a service tier, or a customer segment. A profile may require additional fields, add gate evidence, mark waivable gate evidence optional (a lighter gate), change gate formality, and override listed rule parameters. A profile cannot redefine the lifecycle (it has no field for phases, order, or legal moves), change ID semantics, introduce AI authority, remove a gate's human-recorded outcome or approver role, change readiness weights or categories, or disable a rule that the rule's own stage_behavior marks required for the profile's organization stage. tools/validate.py enforces each limit. When two profiles applied to one project override the same rule field, the later profile in the order org_stage, complexity, service, segment wins. Examples are illustrative examples using synthetic data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile_id", "profile_type", "name", "version", "status", "description", "required_fields", "gate_adjustments", "parameter_overrides", "schema_version"],
+  "properties": {
+    "profile_id": {"type": "string", "pattern": "^PRF-[0-9]{6}$", "description": "Unique ID of the profile."},
+    "profile_type": {"type": "string", "enum": ["org_stage", "complexity", "service", "segment"], "description": "What the profile describes."},
+    "org_stage": {"type": "string", "enum": ["startup", "early_scale", "structured_growth", "mature"], "description": "Required when profile_type is org_stage; the stage from standard/org-stages.yaml."},
+    "name": {"type": "string", "minLength": 1, "maxLength": 80},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$", "description": "The profile's own SemVer version."},
+    "status": {"type": "string", "enum": ["draft", "in_review", "released", "deprecated"], "description": "Configuration vocabulary from standard/status-vocabularies.yaml."},
+    "description": {"type": "string", "minLength": 1, "maxLength": 500},
+    "required_fields": {
+      "type": "array",
+      "description": "Fields that become required for records of projects using this profile. Each must be a property of that entity's R1 schema. A profile only adds requirements; the schema minimum always applies.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["entity", "field"],
+        "properties": {
+          "entity": {"type": "string", "enum": ["project", "phase", "milestone", "task", "gate_assessment", "request", "handoff", "risk", "issue", "readiness_scorecard"]},
+          "field": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}
+        }
+      }
+    },
+    "gate_adjustments": {
+      "type": "array",
+      "description": "Changes to gate evidence and formality. The outcome is always recorded by a named human.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["gate_id"],
+        "properties": {
+          "gate_id": {"type": "string", "pattern": "^[a-z]+_gate$"},
+          "formality": {"type": "string", "enum": ["lightweight", "standard", "formal"]},
+          "additional_evidence_types": {"type": "array", "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}, "uniqueItems": true, "description": "Artifact types from lifecycle/lifecycle.yaml added to the gate (a heavier gate)."},
+          "optional_evidence_types": {"type": "array", "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}, "uniqueItems": true, "description": "Required evidence made optional (a lighter gate). Only evidence that lifecycle/gates.yaml marks waivable_by_profile."},
+          "approver_role": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$", "description": "A role key from lifecycle/lifecycle.yaml. Changes who approves; never removes the approver."}
+        }
+      }
+    },
+    "parameter_overrides": {
+      "type": "array",
+      "description": "Overrides of listed rule parameters. Each value is a proposed design value, not a measured result, and a user-configurable parameter.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["config_file", "rule_id", "field", "value"],
+        "properties": {
+          "config_file": {"type": "string", "enum": ["config/sla-rules.yaml", "config/lead-time-rules.yaml"]},
+          "rule_id": {"type": "string", "pattern": "^RUL-[0-9]{6}$"},
+          "field": {"type": "string", "enum": ["target_duration", "warning_offset", "lead_time", "enabled_flag"]},
+          "value": {"type": ["string", "boolean"]}
+        }
+      }
+    },
+    "schema_version": {"type": "string", "const": "0.1.0"}
+  },
+  "if": {"properties": {"profile_type": {"const": "org_stage"}}},
+  "then": {"required": ["org_stage"]},
+  "else": {"not": {"required": ["org_stage"]}},
+  "examples": [
+    {
+      "profile_id": "PRF-000002",
+      "profile_type": "complexity",
+      "name": "Complexity tier: standard",
+      "version": "0.1.0",
+      "status": "released",
+      "description": "Illustrative example of a complexity profile.",
+      "required_fields": [{"entity": "task", "field": "planned_hours"}],
+      "gate_adjustments": [{"gate_id": "design_gate", "additional_evidence_types": ["requirements_list"]}],
+      "parameter_overrides": [{"config_file": "config/lead-time-rules.yaml", "rule_id": "RUL-000101", "field": "lead_time", "value": "P7D"}],
+      "schema_version": "0.1.0"
+    }
+  ]
+}

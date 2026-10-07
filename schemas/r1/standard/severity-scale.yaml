@@ -1,0 +1,36 @@
+standard_version: "1.0.0"
+description: >-
+  Shared severity vocabulary for risks, issues, requests, and launch problems.
+  The scale defines meaning only. It is not an industry benchmark. Response
+  times are never part of a severity definition: each organization sets them
+  in its own configuration, and every such timer is a user-configurable
+  parameter and a proposed design value, not a measured result.
+serialization: >-
+  Records store the severity_id value (for example sev1). Display names are
+  for people and never stored as data.
+
+severities:
+  - severity_id: sev1
+    display_name: "Sev 1"
+    definition: The customer cannot use a critical part of the system, or a launch commitment is at immediate risk, and no workaround exists.
+    impact: Stops critical work for many users, or blocks a launch decision.
+    response_expectation_reference: implementation-operating-system config/sla-rules.yaml, key sev1
+    escalation_role: The role accountable for the delivery function, as configured in the owning repository.
+  - severity_id: sev2
+    display_name: "Sev 2"
+    definition: A significant part of the system is impaired, or a milestone is at risk, and only a costly workaround exists.
+    impact: Degrades important work for a group of users, or threatens a milestone date.
+    response_expectation_reference: implementation-operating-system config/sla-rules.yaml, key sev2
+    escalation_role: The role leading the implementation project, as configured in the owning repository.
+  - severity_id: sev3
+    display_name: "Sev 3"
+    definition: A problem affects part of the work and a reasonable workaround exists.
+    impact: Slows some users or tasks without threatening a milestone.
+    response_expectation_reference: implementation-operating-system config/sla-rules.yaml, key sev3
+    escalation_role: The person assigned to the work item, as configured in the owning repository.
+  - severity_id: sev4
+    display_name: "Sev 4"
+    definition: A minor problem, question, or cosmetic defect with no material effect on the work.
+    impact: Little or no effect on users or dates.
+    response_expectation_reference: implementation-operating-system config/sla-rules.yaml, key sev4
+    escalation_role: No escalation by default; the owning repository may configure one.

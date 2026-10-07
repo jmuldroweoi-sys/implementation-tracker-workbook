@@ -1,0 +1,30 @@
+standard_version: "1.0.0"
+description: >-
+  Shared status vocabularies used by more than one repository. Statuses that
+  belong to one repository's own workflow (for example project, task,
+  request, risk, and issue statuses) are defined by that repository's core,
+  not here. Phase statuses and gate outcomes are in lifecycle-terms.yaml.
+
+vocabularies:
+  - vocabulary_id: configuration
+    values: [draft, in_review, released, deprecated]
+    used_by: [implementation-operating-system, implementation-team-management-toolkit, implementation-enablement-program]
+    applies_to: Configuration items and versioned rules or settings.
+  - vocabulary_id: content
+    values: [draft, in_review, published, retired]
+    used_by: [implementation-enablement-program, implementation-tracker-workbook, implementation-ai-agent-framework]
+    applies_to: Lessons, training deliverables, job aids, and other published content.
+  - vocabulary_id: recommendation
+    values: [proposed, approved, rejected]
+    used_by:
+      - implementation-operating-system
+      - implementation-capacity-and-org-design
+      - implementation-tracker-workbook
+      - implementation-enablement-program
+      - implementation-team-management-toolkit
+      - implementation-ai-agent-framework
+    applies_to: Recommendations (REC) and staffing recommendations (STR). Proposed means no authority. Approved and rejected are set only through an approval record by a named human; an approval record's decision field uses exactly these two decided values.
+  - vocabulary_id: learning_result
+    values: [pass, not_yet]
+    used_by: [implementation-enablement-program, implementation-tracker-workbook, implementation-team-management-toolkit]
+    applies_to: Proficiency results. Not_yet triggers remediation, never a penalty.

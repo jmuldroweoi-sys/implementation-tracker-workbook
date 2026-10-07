@@ -1,0 +1,59 @@
+standard_version: "1.0.0"
+description: >-
+  The six canonical launch readiness categories. This file defines the
+  categories only. Weights and scoring rules belong to the readiness
+  configuration of the operating system core, where every weight is a
+  user-configurable parameter and a proposed design value, not a measured
+  result.
+owning_readiness_authority: implementation-operating-system
+
+categories:
+  - category_id: people
+    name: People
+    description: The right people are assigned, available, and prepared for launch and the period after it.
+    evidence_examples:
+      - Named owners for launch-day roles
+      - Customer team availability confirmed for the launch window
+      - Escalation contacts confirmed
+    owning_authority: implementation-operating-system
+  - category_id: process
+    name: Process
+    description: The customer's changed ways of working are defined, agreed, and ready to run.
+    evidence_examples:
+      - Changed workflows documented and signed off
+      - Handoffs between teams agreed
+      - Decision log current
+    owning_authority: implementation-operating-system
+  - category_id: technology
+    name: Technology
+    description: Configuration, integrations, and environments are built, tested, and stable.
+    evidence_examples:
+      - Configuration items released to the target environment
+      - Integration tests passed
+      - Open defects within the agreed severity limits
+    owning_authority: implementation-operating-system
+  - category_id: data
+    name: Data
+    description: Required data is migrated or loaded, validated, and owned.
+    evidence_examples:
+      - Data load reconciled against the agreed source counts
+      - Validation sign-off recorded
+      - Data owners named
+    owning_authority: implementation-operating-system
+  - category_id: training
+    name: Training
+    description: The people who will use and support the system have completed the required learning.
+    evidence_examples:
+      - Required completion recorded by the enablement program
+      - Proficiency results recorded by the enablement program
+      - Job aids published
+    owning_authority: implementation-operating-system
+    evidence_supplier: implementation-enablement-program
+  - category_id: support
+    name: Support
+    description: The model for supporting users after launch is staffed and ready.
+    evidence_examples:
+      - Support routing confirmed
+      - Post-launch support schedule published
+      - Known-issue list shared with support staff
+    owning_authority: implementation-operating-system

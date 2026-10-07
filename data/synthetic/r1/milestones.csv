@@ -1,0 +1,13 @@
+milestone_id,project_id,phase_id,name,status,target_date,completed_date,critical_flag,owner_role_id,schema_version
+MLS-000001,PRJ-000001,PHS-000001,Kickoff completed,achieved,2026-09-11,2026-09-10,true,ROL-000001,0.1.0
+MLS-000002,PRJ-000001,PHS-000002,Current-state discovery signed off,planned,2026-10-09,,true,ROL-000001,0.1.0
+MLS-000003,PRJ-000002,PHS-000003,Kickoff completed,achieved,2026-06-05,2026-06-04,true,ROL-000001,0.1.0
+MLS-000004,PRJ-000002,PHS-000005,Design approved,achieved,2026-08-14,2026-09-10,true,ROL-000001,0.1.0
+MLS-000005,PRJ-000002,PHS-000006,Integration build complete,missed,2026-10-02,,true,ROL-000004,0.1.0
+MLS-000006,PRJ-000002,PHS-000006,Configuration build complete,planned,2026-10-16,,false,ROL-000004,0.1.0
+MLS-000007,PRJ-000003,PHS-000007,Kickoff completed,achieved,2026-03-06,2026-03-05,true,ROL-000001,0.1.0
+MLS-000008,PRJ-000003,PHS-000009,Design approved,achieved,2026-05-15,2026-05-14,true,ROL-000001,0.1.0
+MLS-000009,PRJ-000003,PHS-000012,Build complete,achieved,2026-08-21,2026-08-21,true,ROL-000004,0.1.0
+MLS-000010,PRJ-000003,PHS-000013,User acceptance signed off,achieved,2026-09-11,2026-09-11,true,ROL-000001,0.1.0
+MLS-000011,PRJ-000003,PHS-000014,Training delivered,achieved,2026-09-26,2026-09-29,true,ROL-000005,0.1.0
+MLS-000012,PRJ-000003,PHS-000015,Launch completed,planned,2026-10-19,,true,ROL-000001,0.1.0

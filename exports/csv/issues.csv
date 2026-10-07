@@ -1,0 +1,6 @@
+issue_id,project_id,phase_id,title,description,severity,status,owner_role_id,opened_at,resolved_at,resolution,schema_version
+ISS-000001,PRJ-000002,PHS-000006,Build environment access expired for one specialist,One technical specialist could not sign in to the build environment.,sev3,resolved,ROL-000004,2026-09-14T14:00:00Z,2026-09-15T11:00:00Z,Access was renewed by the customer contact.,0.1.0
+ISS-000002,PRJ-000002,PHS-000006,Integration cannot be tested without credentials,End-to-end integration testing is stopped until access is provided.,sev2,in_progress,ROL-000004,2026-09-24T17:00:00Z,,,0.1.0
+ISS-000003,PRJ-000003,PHS-000013,Two report filters return wrong totals,Two filters double-count records during acceptance testing.,sev3,closed,ROL-000004,2026-09-02T14:00:00Z,2026-09-08T16:00:00Z,Filter logic was corrected and retested.,0.1.0
+ISS-000004,PRJ-000003,PHS-000014,Training environment slow during sessions,Pages load slowly when more than one class uses the training environment.,sev3,resolved,ROL-000004,2026-09-21T14:00:00Z,2026-09-23T16:00:00Z,Classes were moved to separate time slots.,0.1.0
+ISS-000005,PRJ-000003,PHS-000015,Final data extract arrives one day late,The customer's final extract is scheduled one day after the planned date.,sev4,open,ROL-000004,2026-10-01T14:00:00Z,,,0.1.0

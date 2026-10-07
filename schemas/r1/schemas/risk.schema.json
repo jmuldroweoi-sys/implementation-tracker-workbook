@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:implementation-operating-system:core:0.1.0:risk",
+  "title": "Risk",
+  "description": "An uncertain event that could affect a project (RSK). The score and band are deterministic; the likelihood and impact are a person's judgment. Examples are illustrative examples using synthetic data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "risk_id",
+    "project_id",
+    "phase_id",
+    "title",
+    "description",
+    "likelihood",
+    "impact",
+    "risk_score",
+    "status",
+    "owner_role_id",
+    "identified_at",
+    "schema_version"
+  ],
+  "properties": {
+    "risk_id": {
+      "type": "string",
+      "pattern": "^RSK-[0-9]{6}$",
+      "description": "Unique ID of the risk."
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^PRJ-[0-9]{6}$",
+      "description": "Project the risk belongs to."
+    },
+    "phase_id": {
+      "type": "string",
+      "pattern": "^PHS-[0-9]{6}$",
+      "description": "Phase instance in which the risk was identified; same project."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "description": "Short statement of the risk."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "description": "What could happen and what it would affect."
+    },
+    "likelihood": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Chosen by a person on the scale in config/risk-rules.yaml (a user-configurable parameter)."
+    },
+    "impact": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Chosen by a person on the scale in config/risk-rules.yaml (a user-configurable parameter)."
+    },
+    "risk_score": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Deterministic: likelihood x impact (config/risk-rules.yaml). tools/validate.py recomputes it."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "mitigating",
+        "accepted",
+        "closed"
+      ],
+      "description": "Risk status vocabulary, defined here."
+    },
+    "owner_role_id": {
+      "type": "string",
+      "pattern": "^ROL-[0-9]{6}$",
+      "description": "Role that owns the risk."
+    },
+    "mitigation": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "description": "What is being done or will be done."
+    },
+    "identified_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "When the risk was logged."
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "When the risk was closed. Set only when status is closed."
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "0.1.0",
+      "description": "Version of the R1 core record schemas (0.1.0). Events carry the shared standard version instead."
+    }
+  },
+  "if": {
+    "properties": {
+      "status": {
+        "const": "closed"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "resolved_at"
+    ]
+  },
+  "else": {
+    "not": {
+      "required": [
+        "resolved_at"
+      ]
+    }
+  },
+  "x-csv-columns": [
+    "risk_id",
+    "project_id",
+    "phase_id",
+    "title",
+    "description",
+    "likelihood",
+    "impact",
+    "risk_score",
+    "status",
+    "owner_role_id",
+    "mitigation",
+    "identified_at",
+    "resolved_at",
+    "schema_version"
+  ],
+  "examples": [
+    {
+      "risk_id": "RSK-000002",
+      "project_id": "PRJ-000002",
+      "phase_id": "PHS-000005",
+      "title": "Integration access may be delayed",
+      "description": "Customer credentials for the integration may not arrive before build starts.",
+      "likelihood": 4,
+      "impact": 3,
+      "risk_score": 12,
+      "status": "mitigating",
+      "owner_role_id": "ROL-000001",
+      "mitigation": "Request access early and escalate through the blocked-request rule.",
+      "identified_at": "2026-09-10T15:00:00Z",
+      "schema_version": "0.1.0"
+    }
+  ]
+}

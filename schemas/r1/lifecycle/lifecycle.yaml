@@ -1,0 +1,263 @@
+# R1 reference lifecycle, machine-readable.
+# The phase vocabulary (phase keys, order, phase statuses, gate outcomes) is defined
+# once in standard/lifecycle-terms.yaml. This file adds the operating rules for each
+# phase. phase_id is the standard phase_key: PHS IDs identify one phase instance inside
+# one project (see schemas/phase.schema.json), so a lifecycle definition uses the key.
+# Organizations map their own phase names to these phases; they never add, remove, or
+# reorder phases.
+standard_version: "1.0.0"
+core_version: "0.1.0"
+description: >-
+  The ten-phase implementation lifecycle used by every project at every organization
+  stage. Profiles change how much evidence a phase needs, never which phases exist.
+
+# Role keys name the responsibilities that phases, gates, rules, and records assign.
+# Records reference roles by ROL- ID; each organization maps its ROL- IDs to these keys.
+# One person may hold several roles (solo mode), so ownership is always by role.
+role_keys:
+  - {role_key: implementation_lead, description: "Runs the project day to day and owns most phases."}
+  - {role_key: technical_specialist, description: "Configures the system and builds integrations."}
+  - {role_key: enablement_lead, description: "Plans and delivers training and enablement."}
+  - {role_key: support_owner, description: "Owns the system after launch and accepts the transition."}
+  - {role_key: delivery_leadership, description: "Accountable for the delivery function and receives escalations."}
+  - {role_key: commercial_owner, description: "Closed the agreement and hands the intake to delivery."}
+  - {role_key: customer_sponsor, description: "The customer role that approves scope, design, and launch evidence."}
+  - {role_key: customer_contact, description: "The customer role that raises day-to-day requests."}
+
+# Artifact types are the evidence vocabulary shared by this file and gates.yaml.
+artifact_types:
+  - {artifact_type: scope_summary, description: "Agreed scope, objectives, and constraints."}
+  - {artifact_type: success_criteria, description: "How the customer and team will judge success."}
+  - {artifact_type: kickoff_record, description: "Record that kickoff happened, with attendees by role."}
+  - {artifact_type: project_plan, description: "Milestones and tasks with owners and dates."}
+  - {artifact_type: risk_entries, description: "Risks logged against the project."}
+  - {artifact_type: current_state_summary, description: "How the customer works today and what must change."}
+  - {artifact_type: requirements_list, description: "Prioritized requirements with sources."}
+  - {artifact_type: solution_design, description: "How the configured system and ways of working meet the requirements."}
+  - {artifact_type: design_approval, description: "The customer sponsor's recorded approval of the design."}
+  - {artifact_type: configuration_record, description: "What was configured, by whom, and where."}
+  - {artifact_type: integration_test_record, description: "Evidence that each integration works end to end."}
+  - {artifact_type: test_plan, description: "Acceptance scenarios mapped to requirements."}
+  - {artifact_type: acceptance_results, description: "Results of acceptance testing, with defects logged as issues."}
+  - {artifact_type: acceptance_signoff, description: "The customer sponsor's recorded acceptance of the build."}
+  - {artifact_type: training_plan, description: "Who needs which training, by when."}
+  - {artifact_type: training_completion_records, description: "Completion evidence by user group."}
+  - {artifact_type: support_runbook, description: "How the support owner handles common problems after launch."}
+  - {artifact_type: readiness_scorecard, description: "The deterministic readiness scorecard (RDS) for the project."}
+  - {artifact_type: launch_plan, description: "Ordered launch steps, owners, and fallback steps."}
+  - {artifact_type: launch_confirmation, description: "Record that the system was put into use."}
+  - {artifact_type: stabilization_summary, description: "Issues found after launch and their status."}
+  - {artifact_type: handoff_record, description: "A handoff (HND) with required artifacts, open items, and acceptance."}
+  - {artifact_type: open_items_list, description: "Work that remains open at a handoff, each with an owner."}
+  - {artifact_type: lessons_learned, description: "What worked, what did not, and why."}
+  - {artifact_type: improvement_signals, description: "Proposed improvements to the delivery method."}
+
+# stage_behavior: formality per organization stage. Values: lightweight, standard, formal.
+# The phase always exists; only the evidence depth changes.
+phases:
+  - phase_id: initiate
+    name: Initiate
+    order: 1
+    purpose: Confirm the commitment, scope, team, and target dates for the project.
+    entry_criteria:
+      - An intake handoff from the commercial owner role is accepted.
+      - A project record exists with an owner role and an organization stage.
+    exit_criteria:
+      - Scope and success criteria are recorded.
+      - Kickoff has happened.
+      - A project plan with milestones and tasks exists.
+    expected_artifact_types: [scope_summary, success_criteria, kickoff_record, project_plan]
+    owner_roles: [implementation_lead]
+    emitted_events: [project.created, phase.entered, handoff.completed, task.status_changed, milestone.achieved, gate.assessed, phase.exited]
+    legal_next_phase_ids: [discover]
+    stage_behavior:
+      startup: {formality: lightweight, note: "A short scope note and a task list are enough."}
+      early_scale: {formality: standard, note: "Scope and success criteria use the shared template."}
+      structured_growth: {formality: formal, note: "The sponsor confirms scope in writing."}
+      mature: {formality: formal, note: "Scope is linked to the portfolio plan."}
+
+  - phase_id: discover
+    name: Discover
+    order: 2
+    purpose: Learn the customer's current state, goals, constraints, and requirements.
+    entry_criteria:
+      - The initiate gate outcome is pass or pass_with_conditions.
+    exit_criteria:
+      - The current state is summarized.
+      - Requirements are listed and prioritized.
+      - Known risks are logged.
+    expected_artifact_types: [current_state_summary, requirements_list, risk_entries]
+    owner_roles: [implementation_lead]
+    emitted_events: [phase.entered, task.status_changed, request.submitted, request.status_changed, risk.logged, milestone.achieved, milestone.missed, gate.assessed, phase.exited]
+    legal_next_phase_ids: [design]
+    stage_behavior:
+      startup: {formality: lightweight, note: "Notes and a requirements list in one file."}
+      early_scale: {formality: standard, note: "Requirements use the shared format."}
+      structured_growth: {formality: formal, note: "The sponsor confirms the requirements list."}
+      mature: {formality: formal, note: "Requirements are traceable to design and tests."}
+
+  - phase_id: design
+    name: Design
+    order: 3
+    purpose: Agree how the system and the ways of working will meet the requirements.
+    entry_criteria:
+      - The discover gate outcome is pass or pass_with_conditions.
+    exit_criteria:
+      - The solution design covers every high-priority requirement.
+      - The customer sponsor has approved the design.
+    expected_artifact_types: [solution_design, design_approval]
+    owner_roles: [implementation_lead]
+    emitted_events: [phase.entered, task.status_changed, request.submitted, request.status_changed, risk.logged, risk.status_changed, milestone.achieved, milestone.missed, gate.assessed, phase.exited]
+    legal_next_phase_ids: [build]
+    stage_behavior:
+      startup: {formality: lightweight, note: "A written design summary with sponsor approval."}
+      early_scale: {formality: standard, note: "Design uses the shared template."}
+      structured_growth: {formality: formal, note: "A specialist reviews the design before approval."}
+      mature: {formality: formal, note: "Design changes after approval go through change control."}
+
+  - phase_id: build
+    name: Build
+    order: 4
+    purpose: Configure the system and integrations to the approved design.
+    entry_criteria:
+      - The design gate outcome is pass or pass_with_conditions, or the project is returning from validate for rework.
+    exit_criteria:
+      - Configuration and integrations are complete and recorded.
+      - Integration tests pass.
+    expected_artifact_types: [configuration_record, integration_test_record]
+    owner_roles: [technical_specialist, implementation_lead]
+    emitted_events: [phase.entered, task.status_changed, request.submitted, request.status_changed, request.escalated, issue.logged, issue.resolved, risk.logged, risk.status_changed, milestone.achieved, milestone.missed, gate.assessed, phase.exited]
+    legal_next_phase_ids: [validate]
+    stage_behavior:
+      startup: {formality: lightweight, note: "A configuration checklist is enough."}
+      early_scale: {formality: standard, note: "Configuration is recorded in the shared format."}
+      structured_growth: {formality: formal, note: "A second person reviews configuration."}
+      mature: {formality: formal, note: "Configuration items are versioned (planned for a later version)."}
+
+  - phase_id: validate
+    name: Validate
+    order: 5
+    purpose: Test the build with the customer and iterate until it is accepted.
+    entry_criteria:
+      - The build gate outcome is pass or pass_with_conditions.
+    exit_criteria:
+      - Acceptance scenarios are run and results recorded.
+      - No open sev1 or sev2 issue remains.
+      - The customer sponsor has accepted the build.
+    expected_artifact_types: [test_plan, acceptance_results, acceptance_signoff]
+    owner_roles: [implementation_lead]
+    emitted_events: [phase.entered, task.status_changed, issue.logged, issue.resolved, milestone.achieved, milestone.missed, gate.assessed, phase.exited]
+    legal_next_phase_ids: [enable, build]
+    stage_behavior:
+      startup: {formality: lightweight, note: "The customer runs the key scenarios and confirms by message."}
+      early_scale: {formality: standard, note: "Scenarios and results use the shared format."}
+      structured_growth: {formality: formal, note: "Signed acceptance by the sponsor."}
+      mature: {formality: formal, note: "Acceptance is traceable to requirements."}
+
+  - phase_id: enable
+    name: Enable
+    order: 6
+    purpose: Prepare the people who will use and support the system.
+    entry_criteria:
+      - The validate gate outcome is pass or pass_with_conditions.
+    exit_criteria:
+      - Training is delivered to every user group in the training plan.
+      - The support runbook is published.
+    expected_artifact_types: [training_plan, training_completion_records, support_runbook]
+    owner_roles: [enablement_lead, implementation_lead]
+    emitted_events: [phase.entered, task.status_changed, issue.logged, issue.resolved, risk.logged, risk.status_changed, milestone.achieved, milestone.missed, gate.assessed, phase.exited]
+    legal_next_phase_ids: [launch]
+    stage_behavior:
+      startup: {formality: lightweight, note: "The implementation lead trains directly."}
+      early_scale: {formality: standard, note: "Training follows a shared plan."}
+      structured_growth: {formality: formal, note: "Completion evidence comes from the enablement program."}
+      mature: {formality: formal, note: "Proficiency evidence is required for key roles."}
+
+  - phase_id: launch
+    name: Launch
+    order: 7
+    purpose: Review readiness, record the human launch decision, and put the system into use.
+    entry_criteria:
+      - The enable gate outcome is pass or pass_with_conditions.
+    exit_criteria:
+      - A readiness scorecard is calculated.
+      - A named human records the launch gate outcome.
+      - The system is in use.
+    expected_artifact_types: [readiness_scorecard, launch_plan, launch_confirmation]
+    owner_roles: [implementation_lead, delivery_leadership]
+    emitted_events: [phase.entered, task.status_changed, readiness.scored, issue.logged, issue.resolved, milestone.achieved, milestone.missed, gate.assessed, phase.exited]
+    legal_next_phase_ids: [stabilize]
+    stage_behavior:
+      startup: {formality: lightweight, note: "The implementation lead records the decision with the sponsor."}
+      early_scale: {formality: standard, note: "The readiness scorecard is reviewed before the decision."}
+      structured_growth: {formality: formal, note: "A named approver other than the project owner records the decision."}
+      mature: {formality: formal, note: "Large launches may add the optional large-scale go-live pack (not installed in this version)."}
+
+  - phase_id: stabilize
+    name: Stabilize
+    order: 8
+    purpose: Support early use and resolve launch issues.
+    entry_criteria:
+      - The launch gate outcome is pass or pass_with_conditions and the system is in use.
+    exit_criteria:
+      - No open sev1 or sev2 issue remains.
+      - The stabilization summary is recorded.
+    expected_artifact_types: [stabilization_summary]
+    owner_roles: [implementation_lead, support_owner]
+    emitted_events: [phase.entered, issue.logged, issue.resolved, request.submitted, request.status_changed, request.escalated, gate.assessed, phase.exited]
+    legal_next_phase_ids: [transition]
+    stage_behavior:
+      startup: {formality: lightweight, note: "A short check-in list and an issue list."}
+      early_scale: {formality: standard, note: "A fixed stabilization window set in configuration."}
+      structured_growth: {formality: formal, note: "Exit criteria are reviewed with the support owner."}
+      mature: {formality: formal, note: "Exit follows configured exit rules."}
+
+  - phase_id: transition
+    name: Transition
+    order: 9
+    purpose: Hand ongoing ownership to the long-term team.
+    entry_criteria:
+      - The stabilize gate outcome is pass or pass_with_conditions.
+    exit_criteria:
+      - A handoff to the support owner role is accepted by a named person.
+      - Every open item has an owner after the handoff.
+    expected_artifact_types: [handoff_record, open_items_list]
+    owner_roles: [implementation_lead, support_owner]
+    emitted_events: [phase.entered, handoff.completed, request.status_changed, gate.assessed, phase.exited]
+    legal_next_phase_ids: [review]
+    stage_behavior:
+      startup: {formality: lightweight, note: "The same person may receive the handoff; the record still exists."}
+      early_scale: {formality: standard, note: "Handoff uses the shared checklist."}
+      structured_growth: {formality: formal, note: "A named person in the support owner role accepts."}
+      mature: {formality: formal, note: "Acceptance is audited through events."}
+
+  - phase_id: review
+    name: Review
+    order: 10
+    purpose: Capture lessons and signal improvements to the delivery method.
+    entry_criteria:
+      - The transition gate outcome is pass or pass_with_conditions.
+    exit_criteria:
+      - Lessons learned are recorded.
+      - Improvement signals are captured.
+      - The project status is completed.
+    expected_artifact_types: [lessons_learned, improvement_signals]
+    owner_roles: [implementation_lead]
+    emitted_events: [phase.entered, improvement.logged, phase.exited, project.status_changed]
+    legal_next_phase_ids: []
+    stage_behavior:
+      startup: {formality: lightweight, note: "Three bullet points on what to change next time."}
+      early_scale: {formality: standard, note: "A shared review template."}
+      structured_growth: {formality: formal, note: "Signals are triaged across projects."}
+      mature: {formality: formal, note: "Method changes are versioned and governed."}
+
+# Deterministic phase-move rule (implemented in tools/r1_rules.py, phase_move_allowed):
+# 1. The target phase must be listed in the current phase's legal_next_phase_ids.
+# 2. A forward move needs a recorded gate outcome of pass or pass_with_conditions for
+#    the current phase's gate. A hold keeps the project in the current phase.
+# 3. The only backward move is validate to build (rework). It needs no passing gate.
+# 4. Review is the last phase; nothing follows it.
+phase_move_rules:
+  forward_move_requires_gate_outcomes: [pass, pass_with_conditions]
+  rework_moves:
+    - {from_phase_id: validate, to_phase_id: build}

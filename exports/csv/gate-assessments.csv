@@ -1,0 +1,2 @@
+gate_assessment_id,gate_id,project_id,phase_id,outcome,assessed_at,assessor_person_id,evidence_types_provided,evidence_refs,condition_refs,reason,schema_version
+GAT-000002,design_gate,PRJ-000002,PHS-000005,pass_with_conditions,2026-09-11T14:30:00Z,PER-000002,solution_design;design_approval,MLS-000004;TSK-000007,RSK-000002,Design approved. Integration access is not yet confirmed and is tracked as a risk.,0.1.0

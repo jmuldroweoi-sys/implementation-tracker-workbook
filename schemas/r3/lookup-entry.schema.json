@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:implementation-tracker-workbook:r3:0.1.0:lookup-entry",
+  "title": "Lookup entry",
+  "description": "One value in a workbook lookup list (LKP). Every R1 list is synchronized from the pinned R1 file named in source_path; R3 lists come from R3 schemas. Examples are illustrative examples using synthetic data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "lookup_entry_id",
+    "lookup_type",
+    "key",
+    "display_value",
+    "source_repo",
+    "source_path",
+    "source_version",
+    "active_flag"
+  ],
+  "properties": {
+    "lookup_entry_id": {
+      "type": "string",
+      "pattern": "^LKP-[0-9]{6}$"
+    },
+    "lookup_type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "key": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The stored value, exactly as the source defines it."
+    },
+    "display_value": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A friendlier label or related value (for example the phase a gate belongs to). Never stored in records."
+    },
+    "source_repo": {
+      "type": "string",
+      "enum": [
+        "implementation-operating-system",
+        "implementation-tracker-workbook"
+      ]
+    },
+    "source_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_version": {
+      "type": "string",
+      "pattern": "^([0-9a-f]{7,40}|[0-9]+\\.[0-9]+\\.[0-9]+)$",
+      "description": "The pinned R1 commit (short) or the R3 workbook version."
+    },
+    "active_flag": {
+      "type": "boolean"
+    }
+  },
+  "x-csv-columns": [
+    "lookup_entry_id",
+    "lookup_type",
+    "key",
+    "display_value",
+    "source_repo",
+    "source_path",
+    "source_version",
+    "active_flag"
+  ],
+  "examples": [
+    {
+      "lookup_entry_id": "LKP-000001",
+      "lookup_type": "phase_key",
+      "key": "initiate",
+      "display_value": "Initiate",
+      "source_repo": "implementation-operating-system",
+      "source_path": "standard/lifecycle-terms.yaml",
+      "source_version": "9acd25a",
+      "active_flag": true
+    }
+  ]
+}

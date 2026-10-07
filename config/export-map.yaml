@@ -1,0 +1,263 @@
+# Export map. Each export is generated from a workbook table after recalculation
+# (tools/build_workbook.py --exports); no export is maintained by hand.
+# Columns are the authoritative field names, in the authoritative order. Workbook-only
+# helper columns (checks, due states, bands, event evidence) never enter these files.
+# For R1 entities the column list equals the R1 schema's CSV contract, so an export of
+# unchanged synthetic data is byte-identical to the pinned R1 file.
+exports:
+- table: tblProjects
+  file: exports/csv/projects.csv
+  columns:
+  - project_id
+  - name
+  - customer_reference
+  - customer_label
+  - current_phase_id
+  - project_status
+  - org_stage
+  - complexity_profile_id
+  - service_profile_id
+  - segment_profile_id
+  - project_owner_role_id
+  - target_launch_date
+  - actual_launch_date
+  - external_reference
+  - created_at
+  - updated_at
+  - schema_version
+  authoritative_source: R1 schemas/project.schema.json
+  downstream_consumers:
+  - implementation-capacity-and-org-design
+  - analytics
+- table: tblPhases
+  file: exports/csv/phases.csv
+  columns:
+  - phase_id
+  - project_id
+  - lifecycle_phase_key
+  - status
+  - entered_at
+  - exited_at
+  - owner_role_id
+  - gate_id
+  - schema_version
+  authoritative_source: R1 schemas/phase.schema.json
+  downstream_consumers:
+  - implementation-capacity-and-org-design
+  - analytics
+- table: tblMilestones
+  file: exports/csv/milestones.csv
+  columns:
+  - milestone_id
+  - project_id
+  - phase_id
+  - name
+  - status
+  - target_date
+  - completed_date
+  - critical_flag
+  - owner_role_id
+  - schema_version
+  authoritative_source: R1 schemas/milestone.schema.json
+  downstream_consumers:
+  - analytics
+- table: tblGateAssessments
+  file: exports/csv/gate-assessments.csv
+  columns:
+  - gate_assessment_id
+  - gate_id
+  - project_id
+  - phase_id
+  - outcome
+  - assessed_at
+  - assessor_person_id
+  - evidence_types_provided
+  - evidence_refs
+  - condition_refs
+  - reason
+  - schema_version
+  authoritative_source: R1 schemas/gate-assessment.schema.json
+  downstream_consumers:
+  - analytics
+- table: tblTasks
+  file: exports/csv/tasks.csv
+  columns:
+  - task_id
+  - project_id
+  - phase_id
+  - milestone_id
+  - name
+  - status
+  - owner_role_id
+  - planned_hours
+  - actual_hours
+  - predecessor_task_ids
+  - planned_start_date
+  - planned_due_date
+  - completed_at
+  - critical_flag
+  - schema_version
+  authoritative_source: R1 schemas/task.schema.json
+  downstream_consumers:
+  - implementation-capacity-and-org-design
+  - analytics
+- table: tblRequests
+  file: exports/csv/requests.csv
+  columns:
+  - request_id
+  - project_id
+  - request_type
+  - status
+  - submitted_at
+  - submitted_by_role_id
+  - owner_role_id
+  - priority
+  - due_at
+  - status_changed_at
+  - escalation_due_at
+  - source
+  - description
+  - schema_version
+  authoritative_source: R1 schemas/request.schema.json
+  downstream_consumers:
+  - implementation-capacity-and-org-design
+  - analytics
+- table: tblHandoffs
+  file: exports/csv/handoffs.csv
+  columns:
+  - handoff_id
+  - project_id
+  - from_role_id
+  - to_role_id
+  - handoff_type
+  - status
+  - required_artifact_refs
+  - open_item_refs
+  - requested_at
+  - accepted_at
+  - acceptance_person_id
+  - schema_version
+  authoritative_source: R1 schemas/handoff.schema.json
+  downstream_consumers:
+  - implementation-capacity-and-org-design
+  - analytics
+- table: tblRisks
+  file: exports/csv/risks.csv
+  columns:
+  - risk_id
+  - project_id
+  - phase_id
+  - title
+  - description
+  - likelihood
+  - impact
+  - risk_score
+  - status
+  - owner_role_id
+  - mitigation
+  - identified_at
+  - resolved_at
+  - schema_version
+  authoritative_source: R1 schemas/risk.schema.json
+  downstream_consumers:
+  - analytics
+- table: tblIssues
+  file: exports/csv/issues.csv
+  columns:
+  - issue_id
+  - project_id
+  - phase_id
+  - title
+  - description
+  - severity
+  - status
+  - owner_role_id
+  - opened_at
+  - resolved_at
+  - resolution
+  - schema_version
+  authoritative_source: R1 schemas/issue.schema.json
+  downstream_consumers:
+  - analytics
+- table: tblReadiness
+  file: exports/csv/readiness.csv
+  columns:
+  - readiness_entry_id
+  - readiness_scorecard_id
+  - project_id
+  - assessment_purpose
+  - assessed_at
+  - calculation_version
+  - category
+  - weight
+  - criteria_total_count
+  - criteria_met_count
+  - achieved_rate
+  - category_score
+  - required_evidence_complete_flag
+  - evidence_refs
+  - overall_score
+  - incomplete_required_evidence_flag
+  - schema_version
+  authoritative_source: R1 schemas/readiness-scorecard.schema.json
+  downstream_consumers:
+  - implementation-capacity-and-org-design
+  - analytics
+- table: tblCapacityInputs
+  file: exports/csv/capacity-inputs.csv
+  columns:
+  - capacity_input_id
+  - period
+  - project_id
+  - source_entity_type
+  - source_entity_id
+  - role_id
+  - workload_component_id
+  - workload_type
+  - planned_hours
+  - actual_hours
+  - unit
+  - capacity_inclusion_method
+  - source_repo
+  - source_version
+  - org_stage
+  - export_ready_flag
+  authoritative_source: R3 schemas/r3/capacity-input.schema.json (hours copied from R1 task records)
+  downstream_consumers:
+  - implementation-capacity-and-org-design
+- table: tblEventLog
+  file: exports/csv/event-log.csv
+  columns:
+  - event_id
+  - event_type
+  - occurred_at
+  - actor_id
+  - actor_type
+  - subject_type
+  - subject_id
+  - payload
+  - source_repo
+  - schema_version
+  authoritative_source: R1 standard/schemas/event.schema.json (shared event contract)
+  downstream_consumers:
+  - implementation-capacity-and-org-design
+  - implementation-ai-agent-framework
+  - analytics
+- table: tblEventLog
+  file: exports/jsonl/Event-Log.jsonl
+  columns:
+  - event_id
+  - event_type
+  - occurred_at
+  - actor_id
+  - actor_type
+  - subject_type
+  - subject_id
+  - payload
+  - source_repo
+  - schema_version
+  authoritative_source: R1 standard/schemas/event.schema.json (shared event contract); payload parsed from its JSON text
+  downstream_consumers:
+  - implementation-capacity-and-org-design
+  - implementation-ai-agent-framework
+  - analytics

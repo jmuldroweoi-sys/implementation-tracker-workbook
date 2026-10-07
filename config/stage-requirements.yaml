@@ -1,0 +1,73 @@
+# Organization-stage requirements for workbook fields and operating controls.
+# Stage IDs come from R1 standard/org-stages.yaml (pinned). Values are required,
+# recommended, or optional. Every value is a user-configurable parameter: an adopter
+# may make an item stricter, never looser than an invariant below.
+# One workbook, one model: a stage changes how much you fill in and how often you check,
+# never the tables, the IDs, or who decides.
+stage_source: schemas/r1/standard/org-stages.yaml
+levels: [required, recommended, optional]
+
+invariants:
+  - "Fields an R1 schema marks required are required at every stage; a stage can only add requirements."
+  - "ID semantics (TYPE-NNNNNN, registered prefixes) never change by stage."
+  - "The Event Log keeps the ten-field shared event contract at every stage."
+  - "Readiness always uses the six R1 categories and the R1 weights."
+  - "A named person records every gate outcome and handoff acceptance at every stage; no formula or stage removes that."
+  - "Statuses, transitions, severities, and rule parameters always come from R1."
+
+fields:
+  - {field: tblProjects.target_launch_date, startup: recommended, early_scale: required, structured_growth: required, mature: required}
+  - {field: tblProjects.external_reference, startup: optional, early_scale: optional, structured_growth: recommended, mature: recommended}
+  - {field: tblTasks.planned_due_date, startup: recommended, early_scale: required, structured_growth: required, mature: required}
+  - {field: tblTasks.planned_hours, startup: optional, early_scale: recommended, structured_growth: required, mature: required}
+  - {field: tblTasks.actual_hours, startup: optional, early_scale: recommended, structured_growth: required, mature: required}
+  - {field: tblTasks.milestone_id, startup: optional, early_scale: recommended, structured_growth: required, mature: required}
+  - {field: tblTasks.predecessor_task_ids, startup: optional, early_scale: recommended, structured_growth: recommended, mature: required}
+  - {field: tblRequests.due_at, startup: recommended, early_scale: required, structured_growth: required, mature: required}
+  - {field: tblRisks.mitigation, startup: recommended, early_scale: recommended, structured_growth: required, mature: required}
+  - {field: tblGateAssessments.evidence_types_provided, startup: optional, early_scale: recommended, structured_growth: required, mature: required}
+  - {field: tblHandoffs.open_item_refs, startup: optional, early_scale: recommended, structured_growth: required, mature: required}
+
+controls:
+  - control: gate_assessment_recorded_for_every_gate
+    description: "One tblGateAssessments row, recorded by a named person, for every gate a project passes."
+    startup: required
+    early_scale: required
+    structured_growth: required
+    mature: required
+  - control: readiness_scorecard_before_launch_gate
+    description: "A launch_review readiness scorecard exists before the launch gate is recorded."
+    startup: required
+    early_scale: required
+    structured_growth: required
+    mature: required
+  - control: weekly_workbook_validation
+    description: "Run tools/validate.py and tools/verify_workbook.py, or review every check column, once a week."
+    startup: recommended
+    early_scale: required
+    structured_growth: required
+    mature: required
+  - control: event_rows_for_material_changes
+    description: "Append an Event Log row for each material change listed in config/event-mappings.yaml."
+    startup: recommended
+    early_scale: required
+    structured_growth: required
+    mature: required
+  - control: full_event_reconciliation
+    description: "Clear every missing event_evidence flag inside the reconciliation window."
+    startup: optional
+    early_scale: recommended
+    structured_growth: required
+    mature: required
+  - control: escalation_review
+    description: "Review requests whose escalation_due_state is escalation_due at least weekly."
+    startup: recommended
+    early_scale: required
+    structured_growth: required
+    mature: required
+  - control: capacity_input_export
+    description: "Export Capacity Inputs for capacity planning (R2) each month."
+    startup: optional
+    early_scale: optional
+    structured_growth: recommended
+    mature: required

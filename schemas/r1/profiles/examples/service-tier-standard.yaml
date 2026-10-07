@@ -1,0 +1,17 @@
+# illustrative example: shows the shape of a service profile, not a recommended
+# setting and not a default the system loads.
+# Every duration below is a proposed design value, not a measured result, and a
+# user-configurable parameter.
+profile_id: PRF-000003
+profile_type: service
+name: "Service tier: standard"
+version: "0.1.0"
+status: released
+description: "Illustrative example for a standard service level. Requests need a due time, and the sev2 response timer is longer than the base rule."
+required_fields:
+  - {entity: request, field: due_at}
+gate_adjustments: []
+parameter_overrides:
+  - {config_file: config/sla-rules.yaml, rule_id: RUL-000006, field: target_duration, value: PT8H}  # proposed design value, not a measured result
+  - {config_file: config/sla-rules.yaml, rule_id: RUL-000006, field: warning_offset, value: PT2H}  # proposed design value, not a measured result
+schema_version: "0.1.0"

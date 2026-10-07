@@ -1,0 +1,31 @@
+# Workbook settings. tools/build_workbook.py writes these values into the README tab
+# (table tblWorkbookSettings) and the named cells the formulas use.
+#
+# User-configurable parameters (an adopter changes them in the README tab):
+#   calculation_as_of_at          the evaluation time for every due-state and escalation
+#                                 formula. No formula reads the clock. The value below is
+#                                 the end of the day the R1 synthetic data set describes.
+#   event_reconciliation_from_at  material changes at or after this time must have an
+#                                 Event Log row. The value below is the start of the R1
+#                                 synthetic event sample.
+#   selected_org_stage, default_operating_mode
+# Both timestamps are a user-configurable parameter and an illustrative example value
+# for the bundled synthetic data; neither is a measured result.
+workbook_id: WBK-000001
+workbook_version: "0.1.0"
+r1_source_commit: 9acd25a4673facf2b3cca2467142987548949ce3
+shared_standard_version: "1.0.0"
+calculation_as_of_at: "2026-10-05T23:59:59Z"
+event_reconciliation_from_at: "2026-09-01T00:00:00Z"
+default_operating_mode: starter
+selected_org_stage: startup
+formula_protection_behavior: >-
+  Formula columns are shaded and labeled. The Lookups, Escalation Rules, and KPI Summary
+  tabs and the README text are protected without a password to prevent accidental edits;
+  record tabs stay unprotected so tables can grow. Protection prevents accidents, not
+  deliberate tampering.
+event_capture_mode: >-
+  controlled_entry_with_reconciliation: event rows are imported or appended by a person;
+  formulas flag material changes that have no matching event row. Nothing is appended
+  automatically.
+generated_at: "2026-10-06T23:21:51Z"

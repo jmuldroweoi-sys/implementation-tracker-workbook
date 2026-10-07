@@ -1,0 +1,51 @@
+standard_version: "1.0.0"
+description: >-
+  Organization stages are descriptive configuration profiles. A stage is
+  selected by a person to describe how formal the implementation function
+  is. It is never determined automatically by headcount, and these
+  descriptions are not measured benchmarks.
+
+stages:
+  - stage_id: startup
+    order: 1
+    definition: Implementation is done by one person or a few people who also cover other customer work.
+    typical_characteristics:
+      - One person may sell, implement, train, and support
+      - Work is tracked in one simple tool
+      - Methods live mostly in people's heads
+    becomes_more_formal:
+      - A single repeatable lifecycle and checklist
+      - One shared tracker
+  - stage_id: early_scale
+    order: 2
+    definition: A small team of generalists runs implementations as a distinct activity.
+    typical_characteristics:
+      - Several projects run at once
+      - Delivery quality varies between people
+      - New team members take noticeable time to become productive
+    becomes_more_formal:
+      - Standard phases and gate evidence
+      - Complexity tiers
+      - Basic response targets
+  - stage_id: structured_growth
+    order: 3
+    definition: The function has leads, first specializations, and emerging enablement and operations roles.
+    typical_characteristics:
+      - Demand forecasting matters for staffing conversations
+      - Segments or service tiers are delivered differently
+      - Coaching load on leads limits growth
+    becomes_more_formal:
+      - Named approvers for gates
+      - Capacity planning and staffing triggers
+      - Quality review and calibration
+  - stage_id: mature
+    order: 4
+    definition: Multiple teams deliver in a segmented way with dedicated operations and enablement functions.
+    typical_characteristics:
+      - Delivery data is compared across teams
+      - Method changes are versioned and governed
+      - Cost-to-serve informs planning
+    becomes_more_formal:
+      - Full audit trail through events
+      - Optional large-scale launch practices
+      - Portfolio-level reporting

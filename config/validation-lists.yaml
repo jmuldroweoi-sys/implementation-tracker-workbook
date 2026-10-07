@@ -1,0 +1,392 @@
+# Workbook validation lists. Every list cites its source: a pinned R1 file under
+# schemas/r1/ (synchronized from R1 commit 9acd25a), or an R3 schema for the few
+# workbook-only lists. R3 defines no independent status list.
+# tools/build_workbook.py reads each list from its source, not from this file;
+# tools/validate.py fails if a list here drifts from its source.
+pinned_r1_commit: 9acd25a4673facf2b3cca2467142987548949ce3
+lists:
+- lookup_type: phase_key
+  source_repo: implementation-operating-system
+  source_path: standard/lifecycle-terms.yaml
+  named_range: lst_phase_key
+  used_by:
+  - tblPhases.lifecycle_phase_key
+  values:
+  - initiate
+  - discover
+  - design
+  - build
+  - validate
+  - enable
+  - launch
+  - stabilize
+  - transition
+  - review
+- lookup_type: phase_status
+  source_repo: implementation-operating-system
+  source_path: standard/lifecycle-terms.yaml
+  named_range: lst_phase_status
+  used_by:
+  - tblPhases.status
+  values:
+  - not_started
+  - active
+  - awaiting_gate
+  - completed
+  - blocked
+- lookup_type: gate_outcome
+  source_repo: implementation-operating-system
+  source_path: standard/lifecycle-terms.yaml
+  named_range: lst_gate_outcome
+  used_by:
+  - tblGateAssessments.outcome
+  values:
+  - pass
+  - pass_with_conditions
+  - hold
+- lookup_type: gate_id
+  source_repo: implementation-operating-system
+  source_path: lifecycle/gates.yaml
+  named_range: lst_gate_id
+  used_by:
+  - tblPhases.gate_id
+  - tblGateAssessments.gate_id
+  values:
+  - initiate_gate
+  - discover_gate
+  - design_gate
+  - build_gate
+  - validate_gate
+  - enable_gate
+  - launch_gate
+  - stabilize_gate
+  - transition_gate
+- lookup_type: project_status
+  source_repo: implementation-operating-system
+  source_path: schemas/project.schema.json
+  named_range: lst_project_status
+  used_by:
+  - tblProjects.project_status
+  values:
+  - active
+  - on_hold
+  - completed
+  - cancelled
+- lookup_type: org_stage
+  source_repo: implementation-operating-system
+  source_path: standard/org-stages.yaml
+  named_range: lst_org_stage
+  used_by:
+  - tblProjects.org_stage
+  - tblWorkbookSettings.value (selected_org_stage)
+  values:
+  - startup
+  - early_scale
+  - structured_growth
+  - mature
+- lookup_type: milestone_status
+  source_repo: implementation-operating-system
+  source_path: schemas/milestone.schema.json
+  named_range: lst_milestone_status
+  used_by:
+  - tblMilestones.status
+  values:
+  - planned
+  - achieved
+  - missed
+- lookup_type: task_status
+  source_repo: implementation-operating-system
+  source_path: schemas/task.schema.json
+  named_range: lst_task_status
+  used_by:
+  - tblTasks.status
+  values:
+  - not_started
+  - in_progress
+  - blocked
+  - completed
+  - cancelled
+- lookup_type: request_status
+  source_repo: implementation-operating-system
+  source_path: config/request-state-machine.yaml
+  named_range: lst_request_status
+  used_by:
+  - tblRequests.status
+  values:
+  - submitted
+  - triaged
+  - awaiting_approval
+  - accepted
+  - in_progress
+  - blocked
+  - ready_for_handoff
+  - handed_off
+  - closed
+- lookup_type: request_transition
+  source_repo: implementation-operating-system
+  source_path: config/request-state-machine.yaml
+  named_range: lst_request_transition
+  used_by:
+  - formula lookups only
+  values:
+  - submitted>triaged
+  - submitted>closed
+  - triaged>awaiting_approval
+  - triaged>accepted
+  - triaged>closed
+  - awaiting_approval>accepted
+  - awaiting_approval>closed
+  - accepted>in_progress
+  - in_progress>blocked
+  - in_progress>ready_for_handoff
+  - in_progress>closed
+  - blocked>in_progress
+  - blocked>closed
+  - ready_for_handoff>handed_off
+  - ready_for_handoff>in_progress
+  - handed_off>closed
+- lookup_type: request_type
+  source_repo: implementation-operating-system
+  source_path: schemas/request.schema.json
+  named_range: lst_request_type
+  used_by:
+  - tblRequests.request_type
+  values:
+  - information
+  - access
+  - change
+  - approval
+  - data
+  - training
+  - support
+- lookup_type: request_priority
+  source_repo: implementation-operating-system
+  source_path: schemas/request.schema.json
+  named_range: lst_request_priority
+  used_by:
+  - tblRequests.priority
+  values:
+  - low
+  - normal
+  - high
+  - urgent
+- lookup_type: request_source
+  source_repo: implementation-operating-system
+  source_path: schemas/request.schema.json
+  named_range: lst_request_source
+  used_by:
+  - tblRequests.source
+  values:
+  - customer
+  - internal
+  - partner
+- lookup_type: handoff_status
+  source_repo: implementation-operating-system
+  source_path: schemas/handoff.schema.json
+  named_range: lst_handoff_status
+  used_by:
+  - tblHandoffs.status
+  values:
+  - requested
+  - accepted
+  - rejected
+- lookup_type: handoff_type
+  source_repo: implementation-operating-system
+  source_path: schemas/handoff.schema.json
+  named_range: lst_handoff_type
+  used_by:
+  - tblHandoffs.handoff_type
+  values:
+  - intake
+  - phase
+  - request
+  - transition
+- lookup_type: risk_status
+  source_repo: implementation-operating-system
+  source_path: schemas/risk.schema.json
+  named_range: lst_risk_status
+  used_by:
+  - tblRisks.status
+  values:
+  - open
+  - mitigating
+  - accepted
+  - closed
+- lookup_type: issue_status
+  source_repo: implementation-operating-system
+  source_path: schemas/issue.schema.json
+  named_range: lst_issue_status
+  used_by:
+  - tblIssues.status
+  values:
+  - open
+  - in_progress
+  - resolved
+  - closed
+- lookup_type: severity
+  source_repo: implementation-operating-system
+  source_path: standard/severity-scale.yaml
+  named_range: lst_severity
+  used_by:
+  - tblIssues.severity
+  values:
+  - sev1
+  - sev2
+  - sev3
+  - sev4
+- lookup_type: readiness_category
+  source_repo: implementation-operating-system
+  source_path: standard/readiness-categories.yaml
+  named_range: lst_readiness_category
+  used_by:
+  - tblReadiness.category
+  values:
+  - people
+  - process
+  - technology
+  - data
+  - training
+  - support
+- lookup_type: assessment_purpose
+  source_repo: implementation-operating-system
+  source_path: schemas/readiness-scorecard.schema.json
+  named_range: lst_assessment_purpose
+  used_by:
+  - tblReadiness.assessment_purpose
+  values:
+  - pre_assessment
+  - launch_review
+- lookup_type: actor_type
+  source_repo: implementation-operating-system
+  source_path: standard/schemas/event.schema.json
+  named_range: lst_actor_type
+  used_by:
+  - tblEventLog.actor_type
+  values:
+  - human
+  - system
+  - ai_agent
+- lookup_type: event_type
+  source_repo: implementation-operating-system
+  source_path: standard/event-catalog.yaml
+  named_range: lst_event_type
+  used_by:
+  - tblEventLog.event_type
+  values:
+  - gate.assessed
+  - handoff.completed
+  - improvement.logged
+  - issue.logged
+  - issue.resolved
+  - milestone.achieved
+  - milestone.missed
+  - phase.entered
+  - phase.exited
+  - project.created
+  - project.status_changed
+  - readiness.scored
+  - request.escalated
+  - request.status_changed
+  - request.submitted
+  - risk.logged
+  - risk.status_changed
+  - task.status_changed
+- lookup_type: role_id
+  source_repo: implementation-operating-system
+  source_path: data/synthetic/README.md
+  named_range: lst_role_id
+  used_by:
+  - tblProjects.project_owner_role_id
+  - tblPhases.owner_role_id
+  - tblMilestones.owner_role_id
+  - tblTasks.owner_role_id
+  - tblRequests.submitted_by_role_id
+  - tblRequests.owner_role_id
+  - tblHandoffs.from_role_id
+  - tblHandoffs.to_role_id
+  - tblRisks.owner_role_id
+  - tblIssues.owner_role_id
+  values:
+  - ROL-000001
+  - ROL-000002
+  - ROL-000003
+  - ROL-000004
+  - ROL-000005
+  - ROL-000006
+  - ROL-000007
+  - ROL-000008
+- lookup_type: profile_id
+  source_repo: implementation-operating-system
+  source_path: profiles/examples
+  named_range: lst_profile_id
+  used_by:
+  - tblProjects.complexity_profile_id
+  - tblProjects.service_profile_id
+  - tblProjects.segment_profile_id
+  values:
+  - PRF-000001
+  - PRF-000002
+  - PRF-000003
+  - PRF-000004
+- lookup_type: rule_id
+  source_repo: implementation-operating-system
+  source_path: config
+  named_range: lst_rule_id
+  used_by:
+  - formula lookups only
+  values:
+  - RUL-000001
+  - RUL-000002
+  - RUL-000003
+  - RUL-000004
+  - RUL-000005
+  - RUL-000006
+  - RUL-000007
+  - RUL-000008
+  - RUL-000101
+  - RUL-000102
+  - RUL-000103
+  - RUL-000104
+  - RUL-000201
+  - RUL-000301
+- lookup_type: operating_mode
+  source_repo: implementation-tracker-workbook
+  source_path: schemas/r3/workbook-metadata.schema.json
+  named_range: lst_operating_mode
+  used_by:
+  - tblWorkbookSettings.value (operating_mode)
+  values:
+  - starter
+  - full
+- lookup_type: source_entity_type
+  source_repo: implementation-tracker-workbook
+  source_path: schemas/r3/capacity-input.schema.json
+  named_range: lst_source_entity_type
+  used_by:
+  - tblCapacityInputs.source_entity_type
+  values:
+  - task
+  - request
+  - handoff
+  - phase
+- lookup_type: workload_type
+  source_repo: implementation-tracker-workbook
+  source_path: schemas/r3/capacity-input.schema.json
+  named_range: lst_workload_type
+  used_by:
+  - tblCapacityInputs.workload_type
+  values:
+  - task_effort
+  - request_handling
+  - handoff_effort
+  - phase_summary
+- lookup_type: capacity_inclusion_method
+  source_repo: implementation-tracker-workbook
+  source_path: schemas/r3/capacity-input.schema.json
+  named_range: lst_capacity_inclusion_method
+  used_by:
+  - tblCapacityInputs.capacity_inclusion_method
+  values:
+  - authoritative_workload
+  - informational_only
+  - excluded_to_prevent_double_count

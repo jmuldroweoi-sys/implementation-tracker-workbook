@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:implementation-operating-system:core:0.1.0:gate-assessment",
+  "title": "Gate assessment",
+  "description": "A human-recorded gate outcome (GAT). Deterministic checks and the readiness score inform the assessor; they never produce the outcome. No AI produces a gate outcome. Examples are illustrative examples using synthetic data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "gate_assessment_id",
+    "gate_id",
+    "project_id",
+    "phase_id",
+    "outcome",
+    "assessed_at",
+    "assessor_person_id",
+    "evidence_refs",
+    "reason",
+    "schema_version"
+  ],
+  "properties": {
+    "gate_assessment_id": {
+      "type": "string",
+      "pattern": "^GAT-[0-9]{6}$",
+      "description": "Unique ID of the gate assessment."
+    },
+    "gate_id": {
+      "type": "string",
+      "pattern": "^[a-z]+_gate$",
+      "description": "Gate key from lifecycle/gates.yaml."
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^PRJ-[0-9]{6}$",
+      "description": "Project assessed."
+    },
+    "phase_id": {
+      "type": "string",
+      "pattern": "^PHS-[0-9]{6}$",
+      "description": "Phase instance whose gate was assessed; its lifecycle_phase_key must equal the gate's phase_id."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "pass_with_conditions",
+        "hold"
+      ],
+      "description": "Gate outcome from standard/lifecycle-terms.yaml. Recorded by a named human."
+    },
+    "assessed_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "When the outcome was recorded."
+    },
+    "assessor_person_id": {
+      "type": "string",
+      "pattern": "^PER-[0-9]{6}$",
+      "description": "The named human who recorded the outcome. Never an agent, rule, or system."
+    },
+    "evidence_types_provided": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "uniqueItems": true,
+      "description": "Artifact types from lifecycle/lifecycle.yaml that the assessor reviewed."
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{3}-[0-9]{6}$"
+      },
+      "uniqueItems": true,
+      "description": "IDs of records the assessor reviewed, such as tasks, milestones, or a readiness scorecard."
+    },
+    "condition_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{3}-[0-9]{6}$"
+      },
+      "uniqueItems": true,
+      "description": "IDs of the records that track each condition. Required when the outcome is pass_with_conditions."
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "description": "Why the assessor chose this outcome. Plain operational text; no private notes or personal judgments."
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "0.1.0",
+      "description": "Version of the R1 core record schemas (0.1.0). Events carry the shared standard version instead."
+    }
+  },
+  "if": {
+    "properties": {
+      "outcome": {
+        "const": "pass_with_conditions"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "condition_refs"
+    ],
+    "properties": {
+      "condition_refs": {
+        "minItems": 1
+      }
+    }
+  },
+  "examples": [
+    {
+      "gate_assessment_id": "GAT-000002",
+      "gate_id": "design_gate",
+      "project_id": "PRJ-000002",
+      "phase_id": "PHS-000005",
+      "outcome": "pass_with_conditions",
+      "assessed_at": "2026-09-11T14:30:00Z",
+      "assessor_person_id": "PER-000002",
+      "evidence_types_provided": [
+        "solution_design",
+        "design_approval"
+      ],
+      "evidence_refs": [
+        "MLS-000004",
+        "TSK-000007"
+      ],
+      "condition_refs": [
+        "RSK-000002"
+      ],
+      "reason": "Design approved. Integration access is not yet confirmed and is tracked as a risk.",
+      "schema_version": "0.1.0"
+    }
+  ]
+}

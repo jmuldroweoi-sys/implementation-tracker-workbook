@@ -1,0 +1,2 @@
+handoff_id,project_id,from_role_id,to_role_id,handoff_type,status,required_artifact_refs,open_item_refs,requested_at,accepted_at,acceptance_person_id,schema_version
+HND-000002,PRJ-000003,ROL-000004,ROL-000006,request,accepted,REQ-000006,ISS-000005,2026-10-02T14:00:00Z,2026-10-02T17:00:00Z,PER-000005,0.1.0

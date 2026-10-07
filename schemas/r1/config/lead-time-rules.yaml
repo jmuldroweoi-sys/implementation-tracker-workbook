@@ -1,0 +1,51 @@
+# Lead-time rules.
+# Each rule flags planned work that is scheduled too close to, or after, the date it
+# must come before. Flags prompt a person to re-plan; they never move a date, change a
+# status, or predict a launch date. No AI is used.
+# Every lead_time value is a user-configurable parameter.
+# Every lead_time value is a proposed design value, not a measured result.
+# Durations use ISO 8601 days (P5D is 5 days, P0D is none).
+#
+# Rule types (tools/r1_rules.py, lead_time_flags):
+#   due_before_target_launch   task.planned_due_date <= project.target_launch_date - lead_time
+#   due_before_milestone       task.planned_due_date <= milestone.target_date - lead_time
+#   start_after_predecessors   task.planned_start_date >= each predecessor's planned_due_date + lead_time
+# match narrows which tasks a rule checks: phase_keys (the task's phase instance key),
+# critical_only (only tasks with critical_flag true), and open_only (skip completed and
+# cancelled tasks, whose dates no longer matter).
+standard_version: "1.0.0"
+core_version: "0.1.0"
+rule_type_values: [due_before_target_launch, due_before_milestone, start_after_predecessors]
+
+rules:
+  - rule_id: RUL-000101
+    key: enable_work_before_launch
+    rule_type: due_before_target_launch
+    match: {phase_keys: [enable], critical_only: true, open_only: false}
+    lead_time: P5D  # user-configurable parameter; proposed design value, not a measured result
+    reason: Critical training and support preparation should finish before launch week.
+    enabled_flag: true
+
+  - rule_id: RUL-000102
+    key: validation_before_launch
+    rule_type: due_before_target_launch
+    match: {phase_keys: [validate], critical_only: false, open_only: false}
+    lead_time: P10D  # user-configurable parameter; proposed design value, not a measured result
+    reason: Acceptance testing should leave time to train users before launch.
+    enabled_flag: true
+
+  - rule_id: RUL-000103
+    key: critical_work_before_milestone
+    rule_type: due_before_milestone
+    match: {phase_keys: [], critical_only: true, open_only: false}
+    lead_time: P0D  # user-configurable parameter; proposed design value, not a measured result
+    reason: A critical task should be due no later than the milestone it supports.
+    enabled_flag: true
+
+  - rule_id: RUL-000104
+    key: predecessors_finish_first
+    rule_type: start_after_predecessors
+    match: {phase_keys: [], critical_only: false, open_only: true}
+    lead_time: P0D  # user-configurable parameter; proposed design value, not a measured result
+    reason: An open task should not be planned to start before its predecessors are due.
+    enabled_flag: true

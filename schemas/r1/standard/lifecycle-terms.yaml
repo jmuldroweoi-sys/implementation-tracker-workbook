@@ -1,0 +1,22 @@
+standard_version: "1.0.0"
+description: >-
+  Lifecycle vocabulary only. Entry criteria, exit criteria, gate rules,
+  artifacts, and workflows are defined by the operating system core, not
+  here. Organizations map their own phase names to these phase keys through
+  configuration.
+
+phases:
+  - {phase_key: initiate, order: 1, name: Initiate, summary: "Confirm the commitment, scope, and team for the project."}
+  - {phase_key: discover, order: 2, name: Discover, summary: "Learn the customer's current state, goals, and constraints."}
+  - {phase_key: design, order: 3, name: Design, summary: "Agree how the system and ways of working will meet the goals."}
+  - {phase_key: build, order: 4, name: Build, summary: "Configure the system and integrations to the agreed design."}
+  - {phase_key: validate, order: 5, name: Validate, summary: "Test the build with the customer and iterate until it is accepted."}
+  - {phase_key: enable, order: 6, name: Enable, summary: "Prepare the people who will use and support the system."}
+  - {phase_key: launch, order: 7, name: Launch, summary: "Confirm readiness and put the system into use."}
+  - {phase_key: stabilize, order: 8, name: Stabilize, summary: "Support early use and resolve launch issues."}
+  - {phase_key: transition, order: 9, name: Transition, summary: "Hand ongoing ownership to the long-term team."}
+  - {phase_key: review, order: 10, name: Review, summary: "Capture lessons and log improvements to the method."}
+
+phase_statuses: [not_started, active, awaiting_gate, completed, blocked]
+
+gate_outcomes: [pass, pass_with_conditions, hold]

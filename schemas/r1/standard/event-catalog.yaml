@@ -1,0 +1,552 @@
+standard_version: 1.0.0
+description: The complete event catalog for standard 1.0.0. Every event emitted by any of the six repositories must appear here exactly once, with exactly one producer. Payload field lists name fields only;
+  the producing repository defines their full schema using the field conventions.
+authoritative_effect_values:
+  records_authoritative_transition: The event records a transition that the producing repository has already made authoritatively. The event itself grants no authority.
+  records_proposal: The event records a proposal. It changes no authoritative record until a named human approves it through an approval record.
+  informational: The event records an occurrence for information or workload accounting. It changes no authoritative record.
+events:
+- event_type: project.created
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: project
+  required_payload_fields: [status]
+  optional_payload_fields: [profile_id, scenario_id, target_launch_date]
+  description: A project record was created in the operating system.
+  authoritative_effect: records_authoritative_transition
+- event_type: project.status_changed
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: project
+  required_payload_fields: [from_status, to_status]
+  optional_payload_fields: [reason]
+  description: A project's status changed.
+  authoritative_effect: records_authoritative_transition
+- event_type: phase.entered
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-enablement-program, implementation-ai-agent-framework]
+  subject_type: phase
+  required_payload_fields: [project_id, phase_key]
+  optional_payload_fields: []
+  description: A project entered a lifecycle phase.
+  authoritative_effect: records_authoritative_transition
+- event_type: phase.exited
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-enablement-program, implementation-ai-agent-framework]
+  subject_type: phase
+  required_payload_fields: [project_id, phase_key]
+  optional_payload_fields: [gate_assessment_id]
+  description: A project exited a lifecycle phase.
+  authoritative_effect: records_authoritative_transition
+- event_type: gate.assessed
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-tracker-workbook, implementation-enablement-program, implementation-ai-agent-framework]
+  subject_type: gate_assessment
+  required_payload_fields: [project_id, phase_key, outcome, assessor_id]
+  optional_payload_fields: [conditions]
+  description: 'A named human recorded a gate outcome: pass, pass_with_conditions, or hold.'
+  authoritative_effect: records_authoritative_transition
+- event_type: task.status_changed
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: task
+  required_payload_fields: [project_id, from_status, to_status]
+  optional_payload_fields: [assignee_id]
+  description: A task's status changed.
+  authoritative_effect: records_authoritative_transition
+- event_type: milestone.achieved
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: milestone
+  required_payload_fields: [project_id, achieved_date]
+  optional_payload_fields: []
+  description: A milestone was achieved.
+  authoritative_effect: records_authoritative_transition
+- event_type: milestone.missed
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: milestone
+  required_payload_fields: [project_id, due_date]
+  optional_payload_fields: [reason]
+  description: A milestone passed its due date without being achieved.
+  authoritative_effect: records_authoritative_transition
+- event_type: request.submitted
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: request
+  required_payload_fields: [project_id, request_type]
+  optional_payload_fields: [due_at]
+  description: A request entered the request state machine.
+  authoritative_effect: records_authoritative_transition
+- event_type: request.status_changed
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: request
+  required_payload_fields: [from_status, to_status]
+  optional_payload_fields: [reason]
+  description: A request moved to a new state.
+  authoritative_effect: records_authoritative_transition
+- event_type: request.escalated
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: request
+  required_payload_fields: [rule_id, escalation_role_id, severity]
+  optional_payload_fields: [reason]
+  description: A deterministic rule escalated a stalled request to a named role.
+  authoritative_effect: records_authoritative_transition
+- event_type: approval.recorded
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-enablement-program, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: approval_record
+  required_payload_fields: [decision, approver_id, approved_subject_type, approved_subject_id]
+  optional_payload_fields: [reason]
+  description: A named human recorded an approval or rejection.
+  authoritative_effect: records_authoritative_transition
+- event_type: handoff.completed
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: handoff
+  required_payload_fields: [project_id, from_role_id, to_role_id]
+  optional_payload_fields: []
+  description: Responsibility was handed from one role to another.
+  authoritative_effect: records_authoritative_transition
+- event_type: risk.logged
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: risk
+  required_payload_fields: [project_id, severity]
+  optional_payload_fields: [risk_score]
+  description: A risk was logged.
+  authoritative_effect: records_authoritative_transition
+- event_type: risk.status_changed
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: risk
+  required_payload_fields: [from_status, to_status]
+  optional_payload_fields: [risk_score]
+  description: A risk's status changed.
+  authoritative_effect: records_authoritative_transition
+- event_type: issue.logged
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: issue
+  required_payload_fields: [project_id, severity]
+  optional_payload_fields: []
+  description: An issue was logged.
+  authoritative_effect: records_authoritative_transition
+- event_type: issue.resolved
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: issue
+  required_payload_fields: [project_id]
+  optional_payload_fields: [resolution_summary]
+  description: An issue was resolved.
+  authoritative_effect: records_authoritative_transition
+- event_type: config_item.released
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-enablement-program, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: configuration_item
+  required_payload_fields: [version]
+  optional_payload_fields: [project_id]
+  description: A configuration item version was released.
+  authoritative_effect: records_authoritative_transition
+- event_type: environment.promoted
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-enablement-program, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: promotion_record
+  required_payload_fields: [configuration_item_id, from_environment_id, to_environment_id]
+  optional_payload_fields: [project_id]
+  description: Configuration was promoted from one environment to another.
+  authoritative_effect: records_authoritative_transition
+- event_type: readiness.scored
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: readiness_scorecard
+  required_payload_fields: [project_id, readiness_score]
+  optional_payload_fields: [category_scores]
+  description: A readiness scorecard was calculated deterministically.
+  authoritative_effect: records_authoritative_transition
+- event_type: improvement.logged
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-tracker-workbook, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: improvement_item
+  required_payload_fields: []
+  optional_payload_fields: [project_id, phase_key]
+  description: An improvement to the delivery method was logged.
+  authoritative_effect: informational
+- event_type: rehearsal.completed
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: rehearsal
+  required_payload_fields: [project_id]
+  optional_payload_fields: [duration_hours]
+  description: A launch rehearsal was completed.
+  authoritative_effect: records_authoritative_transition
+  scenario_pack: large-scale-go-live
+- event_type: cutover.task_completed
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: cutover_task
+  required_payload_fields: [project_id]
+  optional_payload_fields: []
+  description: A cutover runbook task was completed.
+  authoritative_effect: records_authoritative_transition
+  scenario_pack: large-scale-go-live
+- event_type: golive.decision_recorded
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: decision
+  required_payload_fields: [project_id, decision, approval_id]
+  optional_payload_fields: [conditions]
+  description: A named human recorded the go or no-go decision.
+  authoritative_effect: records_authoritative_transition
+  scenario_pack: large-scale-go-live
+- event_type: hypercare.exited
+  version: 1
+  producer_repo: implementation-operating-system
+  consumer_repos: [implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: project
+  required_payload_fields: [exit_date]
+  optional_payload_fields: []
+  description: A project exited hypercare under the configured exit rules.
+  authoritative_effect: records_authoritative_transition
+  scenario_pack: large-scale-go-live
+- event_type: capacity.snapshot_computed
+  version: 1
+  producer_repo: implementation-capacity-and-org-design
+  consumer_repos: [implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: capacity_snapshot
+  required_payload_fields: [period, demand_hours, supply_hours, capacity_gap_hours, load_ratio]
+  optional_payload_fields: [role_id]
+  description: A capacity snapshot was computed deterministically.
+  authoritative_effect: records_authoritative_transition
+- event_type: staffing_trigger.fired
+  version: 1
+  producer_repo: implementation-capacity-and-org-design
+  consumer_repos: [implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: staffing_trigger
+  required_payload_fields: [period, rule_id, capacity_gap_hours]
+  optional_payload_fields: []
+  description: A configured staffing trigger condition was met. Nothing is decided by this event.
+  authoritative_effect: informational
+- event_type: staffing_recommendation.recorded
+  version: 1
+  producer_repo: implementation-capacity-and-org-design
+  consumer_repos: [implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: staffing_recommendation
+  required_payload_fields: [staffing_trigger_id, status]
+  optional_payload_fields: []
+  description: A staffing recommendation was recorded with status proposed. A human decides.
+  authoritative_effect: records_proposal
+- event_type: org_profile.selected
+  version: 1
+  producer_repo: implementation-capacity-and-org-design
+  consumer_repos: [implementation-operating-system, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: org_profile
+  required_payload_fields: [org_stage]
+  optional_payload_fields: []
+  description: A human selected an organization-stage profile.
+  authoritative_effect: records_authoritative_transition
+- event_type: training_capacity.computed
+  version: 1
+  producer_repo: implementation-capacity-and-org-design
+  consumer_repos: [implementation-enablement-program, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: training_capacity
+  required_payload_fields: [period, trainer_hours]
+  optional_payload_fields: []
+  description: Training capacity was computed deterministically.
+  authoritative_effect: records_authoritative_transition
+- event_type: golive_support.computed
+  version: 1
+  producer_repo: implementation-capacity-and-org-design
+  consumer_repos: [implementation-operating-system, implementation-ai-agent-framework]
+  subject_type: golive_support_demand
+  required_payload_fields: [period, project_id, support_hours]
+  optional_payload_fields: []
+  description: Launch support hours were computed deterministically.
+  authoritative_effect: records_authoritative_transition
+- event_type: cost_to_serve.computed
+  version: 1
+  producer_repo: implementation-capacity-and-org-design
+  consumer_repos: [implementation-ai-agent-framework]
+  subject_type: cost_to_serve_record
+  required_payload_fields: [period]
+  optional_payload_fields: [project_id]
+  description: Cost-to-serve was computed deterministically.
+  authoritative_effect: records_authoritative_transition
+- event_type: training.demand_forecasted
+  version: 1
+  producer_repo: implementation-enablement-program
+  consumer_repos: [implementation-capacity-and-org-design]
+  subject_type: curriculum_track
+  required_payload_fields: [period, session_hours]
+  optional_payload_fields: [project_id, learner_count]
+  description: Training demand was forecast for a period. The capacity repository records it as training demand.
+  authoritative_effect: records_authoritative_transition
+- event_type: curriculum.lesson_published
+  version: 1
+  producer_repo: implementation-enablement-program
+  consumer_repos: [implementation-tracker-workbook, implementation-ai-agent-framework]
+  subject_type: lesson
+  required_payload_fields: [version]
+  optional_payload_fields: []
+  description: A lesson version was published.
+  authoritative_effect: records_authoritative_transition
+- event_type: training.session_delivered
+  version: 1
+  producer_repo: implementation-enablement-program
+  consumer_repos: [implementation-capacity-and-org-design, implementation-team-management-toolkit]
+  subject_type: training_session
+  required_payload_fields: [lesson_id, session_hours, trainer_id]
+  optional_payload_fields: []
+  description: A training session was delivered.
+  authoritative_effect: records_authoritative_transition
+- event_type: training.attendance_recorded
+  version: 1
+  producer_repo: implementation-enablement-program
+  consumer_repos: [implementation-operating-system, implementation-tracker-workbook]
+  subject_type: attendance_record
+  required_payload_fields: [training_session_id, person_id, attended_flag]
+  optional_payload_fields: []
+  description: Attendance at a session was recorded.
+  authoritative_effect: records_authoritative_transition
+- event_type: training.completion_updated
+  version: 1
+  producer_repo: implementation-enablement-program
+  consumer_repos: [implementation-operating-system, implementation-capacity-and-org-design, implementation-tracker-workbook, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: person
+  required_payload_fields: [curriculum_track_id, completion_rate]
+  optional_payload_fields: [project_id]
+  description: A person's completion of a track changed.
+  authoritative_effect: records_authoritative_transition
+- event_type: assessment.scored
+  version: 1
+  producer_repo: implementation-enablement-program
+  consumer_repos: [implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: assessment_result
+  required_payload_fields: [assessment_id, person_id, score]
+  optional_payload_fields: []
+  description: An assessment result was scored deterministically.
+  authoritative_effect: records_authoritative_transition
+- event_type: proficiency.recorded
+  version: 1
+  producer_repo: implementation-enablement-program
+  consumer_repos: [implementation-operating-system, implementation-tracker-workbook, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: proficiency_result
+  required_payload_fields: [person_id, result]
+  optional_payload_fields: [objective_id]
+  description: A proficiency result of pass or not_yet was recorded deterministically.
+  authoritative_effect: records_authoritative_transition
+- event_type: remediation.assigned
+  version: 1
+  producer_repo: implementation-enablement-program
+  consumer_repos: [implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: remediation
+  required_payload_fields: [person_id, proficiency_result_id]
+  optional_payload_fields: []
+  description: Remediation was assigned after a not_yet result.
+  authoritative_effect: records_authoritative_transition
+- event_type: deliverable.status_changed
+  version: 1
+  producer_repo: implementation-enablement-program
+  consumer_repos: [implementation-tracker-workbook, implementation-team-management-toolkit, implementation-ai-agent-framework]
+  subject_type: training_deliverable
+  required_payload_fields: [from_status, to_status]
+  optional_payload_fields: []
+  description: A training deliverable's content status changed.
+  authoritative_effect: records_authoritative_transition
+- event_type: ramp.milestone_achieved
+  version: 1
+  producer_repo: implementation-enablement-program
+  consumer_repos: [implementation-capacity-and-org-design, implementation-team-management-toolkit]
+  subject_type: ramp_milestone
+  required_payload_fields: [person_id]
+  optional_payload_fields: []
+  description: A person achieved a ramp milestone.
+  authoritative_effect: records_authoritative_transition
+- event_type: trainer.requirements_met
+  version: 1
+  producer_repo: implementation-enablement-program
+  consumer_repos: [implementation-team-management-toolkit]
+  subject_type: trainer_readiness
+  required_payload_fields: [person_id, certification_requirement_id]
+  optional_payload_fields: []
+  description: A trainer met the learning requirements for a course. This is not a credential grant.
+  authoritative_effect: records_authoritative_transition
+- event_type: one_on_one.held
+  version: 1
+  producer_repo: implementation-team-management-toolkit
+  consumer_repos: [implementation-capacity-and-org-design]
+  subject_type: one_on_one
+  required_payload_fields: [person_id, held_date]
+  optional_payload_fields: [duration_hours]
+  description: A 1:1 was held. The payload never contains notes.
+  authoritative_effect: informational
+- event_type: development_goal.created
+  version: 1
+  producer_repo: implementation-team-management-toolkit
+  consumer_repos: [implementation-capacity-and-org-design]
+  subject_type: development_goal
+  required_payload_fields: [person_id, competency_id]
+  optional_payload_fields: []
+  description: A development goal was created.
+  authoritative_effect: records_authoritative_transition
+- event_type: development_goal.achieved
+  version: 1
+  producer_repo: implementation-team-management-toolkit
+  consumer_repos: [implementation-capacity-and-org-design]
+  subject_type: development_goal
+  required_payload_fields: [person_id]
+  optional_payload_fields: []
+  description: A development goal was achieved.
+  authoritative_effect: records_authoritative_transition
+- event_type: competency.assessed
+  version: 1
+  producer_repo: implementation-team-management-toolkit
+  consumer_repos: [implementation-capacity-and-org-design]
+  subject_type: competency_assessment
+  required_payload_fields: [person_id, competency_id, assessor_id, level]
+  optional_payload_fields: []
+  description: A named human assessed a person against a competency. Consumers receive aggregates only.
+  authoritative_effect: records_authoritative_transition
+- event_type: qa_review.completed
+  version: 1
+  producer_repo: implementation-team-management-toolkit
+  consumer_repos: [implementation-capacity-and-org-design]
+  subject_type: qa_review
+  required_payload_fields: [reviewer_id, reviewed_subject_type, reviewed_subject_id]
+  optional_payload_fields: [review_hours]
+  description: A quality review was completed by a named human.
+  authoritative_effect: records_authoritative_transition
+- event_type: trainer.observed
+  version: 1
+  producer_repo: implementation-team-management-toolkit
+  consumer_repos: [implementation-enablement-program]
+  subject_type: trainer_observation
+  required_payload_fields: [trainer_id, observer_id, training_session_id]
+  optional_payload_fields: []
+  description: A named human observed a trainer delivering a session.
+  authoritative_effect: records_authoritative_transition
+- event_type: calibration.completed
+  version: 1
+  producer_repo: implementation-team-management-toolkit
+  consumer_repos: [implementation-capacity-and-org-design]
+  subject_type: calibration_session
+  required_payload_fields: [participant_count]
+  optional_payload_fields: []
+  description: A calibration session was completed.
+  authoritative_effect: records_authoritative_transition
+- event_type: credential.reviewed
+  version: 1
+  producer_repo: implementation-team-management-toolkit
+  consumer_repos: [implementation-enablement-program]
+  subject_type: credential_review
+  required_payload_fields: [person_id, reviewer_id, certification_requirement_id]
+  optional_payload_fields: []
+  description: A named human reviewed a person for a credential.
+  authoritative_effect: records_authoritative_transition
+- event_type: credential.granted
+  version: 1
+  producer_repo: implementation-team-management-toolkit
+  consumer_repos: [implementation-tracker-workbook, implementation-enablement-program]
+  subject_type: credential_grant
+  required_payload_fields: [person_id, approval_id]
+  optional_payload_fields: []
+  description: A credential was granted by a named human approver.
+  authoritative_effect: records_authoritative_transition
+- event_type: appeal.submitted
+  version: 1
+  producer_repo: implementation-team-management-toolkit
+  consumer_repos: [implementation-capacity-and-org-design]
+  subject_type: appeal
+  required_payload_fields: [person_id, appealed_subject_type, appealed_subject_id]
+  optional_payload_fields: []
+  description: A person appealed a people judgment.
+  authoritative_effect: records_authoritative_transition
+- event_type: appeal.resolved
+  version: 1
+  producer_repo: implementation-team-management-toolkit
+  consumer_repos: [implementation-capacity-and-org-design]
+  subject_type: appeal
+  required_payload_fields: [approval_id, outcome]
+  optional_payload_fields: []
+  description: An appeal was resolved by a named human.
+  authoritative_effect: records_authoritative_transition
+- event_type: agent.task_started
+  version: 1
+  producer_repo: implementation-ai-agent-framework
+  consumer_repos: [implementation-capacity-and-org-design]
+  subject_type: task_run
+  required_payload_fields: [agent_id, task_contract_id, data_scope_id]
+  optional_payload_fields: []
+  description: An AI task run started within its data scope.
+  authoritative_effect: informational
+- event_type: agent.recommendation_created
+  version: 1
+  producer_repo: implementation-ai-agent-framework
+  consumer_repos: [implementation-operating-system, implementation-capacity-and-org-design, implementation-enablement-program, implementation-team-management-toolkit]
+  subject_type: recommendation
+  required_payload_fields: [task_run_id, agent_id]
+  optional_payload_fields: []
+  description: An AI agent created a recommendation with status proposed.
+  authoritative_effect: records_proposal
+- event_type: agent.recommendation_approved
+  version: 1
+  producer_repo: implementation-ai-agent-framework
+  consumer_repos: [implementation-operating-system, implementation-capacity-and-org-design, implementation-enablement-program, implementation-team-management-toolkit]
+  subject_type: recommendation
+  required_payload_fields: [approval_id]
+  optional_payload_fields: []
+  description: A recommendation was approved by a named human through an approval record. Any change is then made by the owning repository.
+  authoritative_effect: informational
+- event_type: agent.recommendation_rejected
+  version: 1
+  producer_repo: implementation-ai-agent-framework
+  consumer_repos: [implementation-operating-system, implementation-capacity-and-org-design, implementation-enablement-program, implementation-team-management-toolkit]
+  subject_type: recommendation
+  required_payload_fields: [approval_id]
+  optional_payload_fields: [reason]
+  description: A recommendation was rejected by a named human.
+  authoritative_effect: informational
+- event_type: agent.task_failed
+  version: 1
+  producer_repo: implementation-ai-agent-framework
+  consumer_repos: [implementation-capacity-and-org-design]
+  subject_type: task_run
+  required_payload_fields: [failure_reason]
+  optional_payload_fields: []
+  description: An AI task run failed closed.
+  authoritative_effect: informational
+- event_type: agent.task_completed
+  version: 1
+  producer_repo: implementation-ai-agent-framework
+  consumer_repos: [implementation-capacity-and-org-design]
+  subject_type: task_run
+  required_payload_fields: []
+  optional_payload_fields: [output_count]
+  description: An AI task run completed.
+  authoritative_effect: informational

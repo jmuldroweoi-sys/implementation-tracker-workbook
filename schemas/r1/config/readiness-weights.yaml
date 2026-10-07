@@ -1,0 +1,41 @@
+# Readiness weights and required evidence.
+# Every weight and the total below is a proposed design value, not a measured result,
+# and a user-configurable parameter. The six categories come from
+# standard/readiness-categories.yaml and cannot be renamed, added, or removed here.
+#
+# Calculation (tools/r1_rules.py, readiness_scorecard), calculation_version below:
+#   achieved_rate   = criteria_met_count / criteria_total_count        (0 to 1)
+#   category_score  = weight x achieved_rate                            (rounded to 2 places)
+#   overall_score   = 100 x sum(weight x achieved_rate) / sum(weight)   (rounded to 2 places)
+#   incomplete_required_evidence_flag = true when any category's
+#                     required_evidence_complete_flag is false
+# Rounding is half-up on exact decimals, so the same inputs always give the same score.
+#
+# The score informs the readiness review. It does not make the launch decision. A named
+# human records the launch gate outcome in a gate assessment (lifecycle/gates.yaml,
+# launch_gate). A high score with incomplete required evidence is still incomplete.
+standard_version: "1.0.0"
+core_version: "0.1.0"
+rule_id: RUL-000301
+calculation_version: "1.0.0"
+total_weight: 100  # user-configurable parameter; proposed design value, not a measured result
+
+categories:
+  - category: people
+    weight: 15  # user-configurable parameter; proposed design value, not a measured result
+    required_evidence: "Named owners exist for every launch role, and the sponsor has confirmed availability for launch week."
+  - category: process
+    weight: 15  # user-configurable parameter; proposed design value, not a measured result
+    required_evidence: "The new ways of working are documented and the sponsor has approved them."
+  - category: technology
+    weight: 25  # user-configurable parameter; proposed design value, not a measured result
+    required_evidence: "Acceptance is signed off and every integration has a passing end-to-end test."
+  - category: data
+    weight: 20  # user-configurable parameter; proposed design value, not a measured result
+    required_evidence: "The final data load plan is approved and a trial load has been checked."
+  - category: training
+    weight: 15  # user-configurable parameter; proposed design value, not a measured result
+    required_evidence: "Training completion is recorded for every user group in the training plan."
+  - category: support
+    weight: 10  # user-configurable parameter; proposed design value, not a measured result
+    required_evidence: "The support runbook is published and launch-week support coverage is confirmed."

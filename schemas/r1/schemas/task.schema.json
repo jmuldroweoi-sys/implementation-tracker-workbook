@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:implementation-operating-system:core:0.1.0:task",
+  "title": "Task",
+  "description": "A unit of work assigned to a role (TSK). A task cannot be in progress or completed while a predecessor is not completed; tools/validate.py checks this. Examples are illustrative examples using synthetic data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "project_id",
+    "phase_id",
+    "name",
+    "status",
+    "owner_role_id",
+    "critical_flag",
+    "schema_version"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^TSK-[0-9]{6}$",
+      "description": "Unique ID of the task."
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^PRJ-[0-9]{6}$",
+      "description": "Project the task belongs to."
+    },
+    "phase_id": {
+      "type": "string",
+      "pattern": "^PHS-[0-9]{6}$",
+      "description": "Phase instance the task belongs to; same project."
+    },
+    "milestone_id": {
+      "type": "string",
+      "pattern": "^MLS-[0-9]{6}$",
+      "description": "Milestone the task supports, if any; same project."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "description": "What the task delivers."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "in_progress",
+        "blocked",
+        "completed",
+        "cancelled"
+      ],
+      "description": "Task status vocabulary, defined here."
+    },
+    "owner_role_id": {
+      "type": "string",
+      "pattern": "^ROL-[0-9]{6}$",
+      "description": "Role that owns the task."
+    },
+    "planned_hours": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Planned effort in hours. Operational data: R1 stores it and never calculates capacity from it; R2 consumes it."
+    },
+    "actual_hours": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Effort recorded so far in hours. Operational data, consumed by R2."
+    },
+    "predecessor_task_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^TSK-[0-9]{6}$"
+      },
+      "uniqueItems": true,
+      "description": "Tasks that must be completed before this task can start or finish; same project."
+    },
+    "planned_start_date": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "Planned start date."
+    },
+    "planned_due_date": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "Planned due date."
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "When the task was completed. Set only when status is completed."
+    },
+    "critical_flag": {
+      "type": "boolean",
+      "description": "True when the task is on the path to a critical milestone or the launch date."
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "0.1.0",
+      "description": "Version of the R1 core record schemas (0.1.0). Events carry the shared standard version instead."
+    }
+  },
+  "if": {
+    "properties": {
+      "status": {
+        "const": "completed"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "completed_at"
+    ]
+  },
+  "else": {
+    "not": {
+      "required": [
+        "completed_at"
+      ]
+    }
+  },
+  "x-csv-columns": [
+    "task_id",
+    "project_id",
+    "phase_id",
+    "milestone_id",
+    "name",
+    "status",
+    "owner_role_id",
+    "planned_hours",
+    "actual_hours",
+    "predecessor_task_ids",
+    "planned_start_date",
+    "planned_due_date",
+    "completed_at",
+    "critical_flag",
+    "schema_version"
+  ],
+  "examples": [
+    {
+      "task_id": "TSK-000002",
+      "project_id": "PRJ-000001",
+      "phase_id": "PHS-000001",
+      "milestone_id": "MLS-000001",
+      "name": "Run kickoff session",
+      "status": "completed",
+      "owner_role_id": "ROL-000001",
+      "planned_hours": 2,
+      "actual_hours": 2,
+      "predecessor_task_ids": [
+        "TSK-000001"
+      ],
+      "planned_start_date": "2026-09-10",
+      "planned_due_date": "2026-09-11",
+      "completed_at": "2026-09-10T20:00:00Z",
+      "critical_flag": true,
+      "schema_version": "0.1.0"
+    }
+  ]
+}

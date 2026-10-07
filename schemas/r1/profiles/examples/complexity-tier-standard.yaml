@@ -1,0 +1,18 @@
+# illustrative example: shows the shape of a complexity profile, not a recommended
+# setting and not a default the system loads.
+# Every lead time below is a proposed design value, not a measured result, and a
+# user-configurable parameter.
+profile_id: PRF-000002
+profile_type: complexity
+name: "Complexity tier: standard"
+version: "0.1.0"
+status: released
+description: "Illustrative example for a project with a few integrations and several user groups. It asks for planned hours on tasks and a longer training lead time."
+required_fields:
+  - {entity: task, field: planned_hours}
+  - {entity: task, field: planned_due_date}
+gate_adjustments:
+  - {gate_id: design_gate, additional_evidence_types: [requirements_list]}
+parameter_overrides:
+  - {config_file: config/lead-time-rules.yaml, rule_id: RUL-000101, field: lead_time, value: P7D}  # proposed design value, not a measured result
+schema_version: "0.1.0"

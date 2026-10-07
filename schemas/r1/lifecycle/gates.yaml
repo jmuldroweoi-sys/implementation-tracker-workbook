@@ -1,0 +1,201 @@
+# R1 phase gates, machine-readable.
+# A gate is the review at the end of a phase. A named human records its outcome in a
+# gate assessment (GAT, schemas/gate-assessment.schema.json). Deterministic checks
+# below inform that person; they never produce an outcome. No readiness score, rule,
+# or AI produces a gate outcome, and no profile removes the human record.
+standard_version: "1.0.0"
+core_version: "0.1.0"
+description: >-
+  One gate per phase from Initiate to Transition. Review has no gate: it closes the
+  project. Outcomes come only from standard/lifecycle-terms.yaml.
+outcome_authority: >-
+  A named human records every gate outcome. Deterministic checks and the readiness
+  score are inputs to that person's review. They are never the decision.
+
+# Deterministic checks. Each is implemented in tools/r1_rules.py (GATE_CHECKS) and
+# returns met or not met from records alone.
+check_definitions:
+  - {check_id: critical_tasks_closed, description: "Every critical task in the phase instance is completed or cancelled."}
+  - {check_id: critical_milestones_achieved, description: "Every critical milestone in the phase instance is achieved."}
+  - {check_id: no_open_sev1_sev2_issues, description: "The project has no sev1 or sev2 issue that is open or in progress."}
+  - {check_id: no_open_critical_risks, description: "The project has no open risk in the critical band of config/risk-rules.yaml."}
+  - {check_id: no_blocked_requests, description: "The project has no request in the blocked status."}
+  - {check_id: readiness_scored, description: "A launch_review readiness scorecard exists for the project."}
+  - {check_id: required_evidence_complete, description: "The latest launch_review scorecard has no incomplete required evidence."}
+  - {check_id: handoff_accepted, description: "A transition handoff for the project has status accepted."}
+
+# required_evidence_types reference artifact_types in lifecycle.yaml.
+# waivable_by_profile: a profile may mark that evidence optional (a lighter gate).
+# Evidence that is not waivable stays required at every organization stage.
+# stage_behavior formality: lightweight (the owner role self-assesses against the
+# checklist), standard (evidence is attached), formal (a named approver records it).
+gates:
+  - gate_id: initiate_gate
+    gate_name: Initiate gate
+    phase_id: initiate
+    purpose: Confirm the project is committed, scoped, and planned before discovery starts.
+    required_evidence_types:
+      - {artifact_type: scope_summary, waivable_by_profile: false}
+      - {artifact_type: success_criteria, waivable_by_profile: true}
+      - {artifact_type: kickoff_record, waivable_by_profile: true}
+      - {artifact_type: project_plan, waivable_by_profile: false}
+    required_checks: [critical_tasks_closed, critical_milestones_achieved]
+    allowed_outcomes: [pass, pass_with_conditions, hold]
+    approver_role: implementation_lead
+    recorded_by: human
+    stage_behavior:
+      startup: {formality: lightweight}
+      early_scale: {formality: standard}
+      structured_growth: {formality: formal}
+      mature: {formality: formal}
+    emitted_event: gate.assessed
+
+  - gate_id: discover_gate
+    gate_name: Discover gate
+    phase_id: discover
+    purpose: Confirm the current state and requirements are understood well enough to design.
+    required_evidence_types:
+      - {artifact_type: current_state_summary, waivable_by_profile: false}
+      - {artifact_type: requirements_list, waivable_by_profile: false}
+      - {artifact_type: risk_entries, waivable_by_profile: true}
+    required_checks: [critical_tasks_closed, critical_milestones_achieved]
+    allowed_outcomes: [pass, pass_with_conditions, hold]
+    approver_role: implementation_lead
+    recorded_by: human
+    stage_behavior:
+      startup: {formality: lightweight}
+      early_scale: {formality: standard}
+      structured_growth: {formality: formal}
+      mature: {formality: formal}
+    emitted_event: gate.assessed
+
+  - gate_id: design_gate
+    gate_name: Design gate
+    phase_id: design
+    purpose: Confirm the customer approved a design that covers the high-priority requirements.
+    required_evidence_types:
+      - {artifact_type: solution_design, waivable_by_profile: false}
+      - {artifact_type: design_approval, waivable_by_profile: false}
+    required_checks: [critical_tasks_closed, critical_milestones_achieved]
+    allowed_outcomes: [pass, pass_with_conditions, hold]
+    approver_role: implementation_lead
+    recorded_by: human
+    stage_behavior:
+      startup: {formality: lightweight}
+      early_scale: {formality: standard}
+      structured_growth: {formality: formal}
+      mature: {formality: formal}
+    emitted_event: gate.assessed
+
+  - gate_id: build_gate
+    gate_name: Build gate
+    phase_id: build
+    purpose: Confirm the build is complete and integrations work before customer testing.
+    required_evidence_types:
+      - {artifact_type: configuration_record, waivable_by_profile: true}
+      - {artifact_type: integration_test_record, waivable_by_profile: false}
+    required_checks: [critical_tasks_closed, critical_milestones_achieved, no_blocked_requests]
+    allowed_outcomes: [pass, pass_with_conditions, hold]
+    approver_role: implementation_lead
+    recorded_by: human
+    stage_behavior:
+      startup: {formality: lightweight}
+      early_scale: {formality: standard}
+      structured_growth: {formality: formal}
+      mature: {formality: formal}
+    emitted_event: gate.assessed
+
+  - gate_id: validate_gate
+    gate_name: Validate gate
+    phase_id: validate
+    purpose: Confirm the customer accepted the build. A hold sends the project back to build for rework.
+    required_evidence_types:
+      - {artifact_type: test_plan, waivable_by_profile: true}
+      - {artifact_type: acceptance_results, waivable_by_profile: false}
+      - {artifact_type: acceptance_signoff, waivable_by_profile: false}
+    required_checks: [critical_tasks_closed, critical_milestones_achieved, no_open_sev1_sev2_issues]
+    allowed_outcomes: [pass, pass_with_conditions, hold]
+    approver_role: implementation_lead
+    recorded_by: human
+    stage_behavior:
+      startup: {formality: lightweight}
+      early_scale: {formality: standard}
+      structured_growth: {formality: formal}
+      mature: {formality: formal}
+    emitted_event: gate.assessed
+
+  - gate_id: enable_gate
+    gate_name: Enable gate
+    phase_id: enable
+    purpose: Confirm users are trained and support is prepared.
+    required_evidence_types:
+      - {artifact_type: training_plan, waivable_by_profile: true}
+      - {artifact_type: training_completion_records, waivable_by_profile: false}
+      - {artifact_type: support_runbook, waivable_by_profile: false}
+    required_checks: [critical_tasks_closed, critical_milestones_achieved]
+    allowed_outcomes: [pass, pass_with_conditions, hold]
+    approver_role: implementation_lead
+    recorded_by: human
+    stage_behavior:
+      startup: {formality: lightweight}
+      early_scale: {formality: standard}
+      structured_growth: {formality: formal}
+      mature: {formality: formal}
+    emitted_event: gate.assessed
+
+  - gate_id: launch_gate
+    gate_name: Launch gate
+    phase_id: launch
+    purpose: >-
+      The launch decision. A named human reviews the readiness scorecard and the checks,
+      then records pass (launch), pass_with_conditions (launch with tracked conditions),
+      or hold (do not launch yet). The readiness score informs the review; it is not the
+      decision.
+    required_evidence_types:
+      - {artifact_type: readiness_scorecard, waivable_by_profile: false}
+      - {artifact_type: launch_plan, waivable_by_profile: false}
+    required_checks: [readiness_scored, required_evidence_complete, no_open_sev1_sev2_issues, no_open_critical_risks, no_blocked_requests]
+    allowed_outcomes: [pass, pass_with_conditions, hold]
+    approver_role: delivery_leadership
+    recorded_by: human
+    stage_behavior:
+      startup: {formality: lightweight}
+      early_scale: {formality: standard}
+      structured_growth: {formality: formal}
+      mature: {formality: formal}
+    emitted_event: gate.assessed
+
+  - gate_id: stabilize_gate
+    gate_name: Stabilize gate
+    phase_id: stabilize
+    purpose: Confirm early use is stable enough to hand ownership to the long-term team.
+    required_evidence_types:
+      - {artifact_type: stabilization_summary, waivable_by_profile: false}
+    required_checks: [no_open_sev1_sev2_issues, no_blocked_requests]
+    allowed_outcomes: [pass, pass_with_conditions, hold]
+    approver_role: implementation_lead
+    recorded_by: human
+    stage_behavior:
+      startup: {formality: lightweight}
+      early_scale: {formality: standard}
+      structured_growth: {formality: formal}
+      mature: {formality: formal}
+    emitted_event: gate.assessed
+
+  - gate_id: transition_gate
+    gate_name: Transition gate
+    phase_id: transition
+    purpose: Confirm the support owner role accepted ownership and every open item has an owner.
+    required_evidence_types:
+      - {artifact_type: handoff_record, waivable_by_profile: false}
+      - {artifact_type: open_items_list, waivable_by_profile: false}
+    required_checks: [handoff_accepted]
+    allowed_outcomes: [pass, pass_with_conditions, hold]
+    approver_role: support_owner
+    recorded_by: human
+    stage_behavior:
+      startup: {formality: lightweight}
+      early_scale: {formality: standard}
+      structured_growth: {formality: formal}
+      mature: {formality: formal}
+    emitted_event: gate.assessed

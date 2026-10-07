@@ -1,0 +1,190 @@
+# Event mappings: which workbook change corresponds to which registered R1 event.
+# This does not mean the workbook appends events. A macro-free spreadsheet cannot do that
+# reliably. A person appends or imports the event row; the event_evidence columns flag
+# material changes that still have no row. Event types, subject types, and payload field
+# names come from the pinned R1 event catalog (schemas/r1/standard/event-catalog.yaml).
+# Every event row uses source_repo implementation-operating-system: these are R1 events,
+# recorded in R1's spreadsheet implementation. R3 produces no events of its own.
+pinned_r1_commit: 9acd25a4673facf2b3cca2467142987548949ce3
+mappings:
+- source_table: tblProjects
+  trigger_condition: a project row is added
+  event_type: project.created
+  event_subject: tblProjects.project_id
+  subject_type: project
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    status: tblProjects.project_status
+  optional_payload_source_fields:
+    target_launch_date: tblProjects.target_launch_date
+- source_table: tblProjects
+  trigger_condition: project_status changes
+  event_type: project.status_changed
+  event_subject: tblProjects.project_id
+  subject_type: project
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    from_status: previous tblProjects.project_status
+    to_status: tblProjects.project_status
+  optional_payload_source_fields: {}
+- source_table: tblPhases
+  trigger_condition: entered_at is set on a phase row
+  event_type: phase.entered
+  event_subject: tblPhases.phase_id
+  subject_type: phase
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    project_id: tblPhases.project_id
+    phase_key: tblPhases.lifecycle_phase_key
+  optional_payload_source_fields: {}
+- source_table: tblPhases
+  trigger_condition: exited_at is set on a phase row
+  event_type: phase.exited
+  event_subject: tblPhases.phase_id
+  subject_type: phase
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    project_id: tblPhases.project_id
+    phase_key: tblPhases.lifecycle_phase_key
+  optional_payload_source_fields:
+    gate_assessment_id: tblGateAssessments.gate_assessment_id of the passing assessment
+- source_table: tblGateAssessments
+  trigger_condition: a person records a gate outcome
+  event_type: gate.assessed
+  event_subject: tblGateAssessments.gate_assessment_id
+  subject_type: gate_assessment
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    project_id: tblGateAssessments.project_id
+    phase_key: tblPhases.lifecycle_phase_key of tblGateAssessments.phase_id
+    outcome: tblGateAssessments.outcome
+    assessor_id: tblGateAssessments.assessor_person_id
+  optional_payload_source_fields:
+    conditions: tblGateAssessments.condition_refs
+- source_table: tblTasks
+  trigger_condition: task status changes
+  event_type: task.status_changed
+  event_subject: tblTasks.task_id
+  subject_type: task
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    project_id: tblTasks.project_id
+    from_status: previous tblTasks.status
+    to_status: tblTasks.status
+  optional_payload_source_fields: {}
+- source_table: tblMilestones
+  trigger_condition: status becomes achieved
+  event_type: milestone.achieved
+  event_subject: tblMilestones.milestone_id
+  subject_type: milestone
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    project_id: tblMilestones.project_id
+    achieved_date: tblMilestones.completed_date
+  optional_payload_source_fields: {}
+- source_table: tblMilestones
+  trigger_condition: status becomes missed (target_date passed)
+  event_type: milestone.missed
+  event_subject: tblMilestones.milestone_id
+  subject_type: milestone
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    project_id: tblMilestones.project_id
+    due_date: tblMilestones.target_date
+  optional_payload_source_fields: {}
+- source_table: tblRequests
+  trigger_condition: a request row is added
+  event_type: request.submitted
+  event_subject: tblRequests.request_id
+  subject_type: request
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    project_id: tblRequests.project_id
+    request_type: tblRequests.request_type
+  optional_payload_source_fields:
+    due_at: tblRequests.due_at
+- source_table: tblRequests
+  trigger_condition: status changes along a legal R1 transition
+  event_type: request.status_changed
+  event_subject: tblRequests.request_id
+  subject_type: request
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    from_status: previous tblRequests.status
+    to_status: tblRequests.status
+  optional_payload_source_fields: {}
+- source_table: tblRequests
+  trigger_condition: escalation_due_state becomes escalation_due and the R1 rule escalates
+  event_type: request.escalated
+  event_subject: tblRequests.request_id
+  subject_type: request
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    rule_id: tblRequests.escalation_rule_id
+    escalation_role_id: tblEscalationRules.escalation_role_id
+    severity: tblEscalationRules.escalation_severity
+  optional_payload_source_fields: {}
+- source_table: tblHandoffs
+  trigger_condition: a named person accepts the handoff
+  event_type: handoff.completed
+  event_subject: tblHandoffs.handoff_id
+  subject_type: handoff
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    project_id: tblHandoffs.project_id
+    from_role_id: tblHandoffs.from_role_id
+    to_role_id: tblHandoffs.to_role_id
+  optional_payload_source_fields: {}
+- source_table: tblRisks
+  trigger_condition: a risk row is added
+  event_type: risk.logged
+  event_subject: tblRisks.risk_id
+  subject_type: risk
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    project_id: tblRisks.project_id
+    severity: tblRisks.risk_severity
+  optional_payload_source_fields:
+    risk_score: tblRisks.risk_score
+- source_table: tblRisks
+  trigger_condition: risk status changes
+  event_type: risk.status_changed
+  event_subject: tblRisks.risk_id
+  subject_type: risk
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    from_status: previous tblRisks.status
+    to_status: tblRisks.status
+  optional_payload_source_fields:
+    risk_score: tblRisks.risk_score
+- source_table: tblIssues
+  trigger_condition: an issue row is added
+  event_type: issue.logged
+  event_subject: tblIssues.issue_id
+  subject_type: issue
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    project_id: tblIssues.project_id
+    severity: tblIssues.severity
+  optional_payload_source_fields: {}
+- source_table: tblIssues
+  trigger_condition: status becomes resolved
+  event_type: issue.resolved
+  event_subject: tblIssues.issue_id
+  subject_type: issue
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    project_id: tblIssues.project_id
+  optional_payload_source_fields:
+    resolution_summary: tblIssues.resolution
+- source_table: tblReadiness
+  trigger_condition: a scorecard's six rows are complete and calculated
+  event_type: readiness.scored
+  event_subject: tblReadiness.readiness_scorecard_id
+  subject_type: readiness_scorecard
+  actor: the named person (PER-) who made the change; for request.escalated and readiness.scored, the R1 rule (RUL-) as system actor
+  required_payload_source_fields:
+    project_id: tblReadiness.project_id
+    readiness_score: tblReadiness.overall_score
+  optional_payload_source_fields:
+    category_scores: tblReadiness.category_score by category

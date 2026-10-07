@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+dist/
+.env
+.env.*
+# Private publication controls never enter this repository.
+*.blocklist
+*blocklist*.txt
+*fingerprints*.txt

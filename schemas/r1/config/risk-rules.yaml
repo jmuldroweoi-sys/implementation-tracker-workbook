@@ -1,0 +1,68 @@
+# Risk scoring and escalation rules.
+# Every number in this file (scale bounds, band boundaries) is a user-configurable parameter.
+# Every number in this file is a proposed design value, not a measured result.
+# This is one simple, deterministic way to rank risks so they are reviewed consistently. It is not a
+# universal risk methodology.
+#
+# Formula (tools/r1_rules.py, risk_score and risk_band):
+#   risk_score = likelihood x impact
+#   the band is the one whose min_score <= risk_score <= max_score
+#   the band's severity is the value carried by risk.logged
+# A person chooses likelihood and impact. The rule only multiplies and classifies.
+standard_version: "1.0.0"
+core_version: "0.1.0"
+rule_id: RUL-000201
+formula: likelihood_times_impact
+
+likelihood_values:
+  min: 1  # user-configurable parameter; proposed design value, not a measured result
+  max: 5  # user-configurable parameter; proposed design value, not a measured result
+  meanings:
+    - {value: 1, meaning: Very unlikely}
+    - {value: 2, meaning: Unlikely}
+    - {value: 3, meaning: Possible}
+    - {value: 4, meaning: Likely}
+    - {value: 5, meaning: Almost certain}
+
+impact_values:
+  min: 1  # user-configurable parameter; proposed design value, not a measured result
+  max: 5  # user-configurable parameter; proposed design value, not a measured result
+  meanings:
+    - {value: 1, meaning: Negligible effect on dates or scope}
+    - {value: 2, meaning: Minor effect absorbed inside the phase}
+    - {value: 3, meaning: Moderate effect on a milestone}
+    - {value: 4, meaning: Major effect on a critical milestone or the launch date}
+    - {value: 5, meaning: Severe effect on the launch or on customer operations}
+
+# Bands must cover every score from 1 to max likelihood x max impact with no gap or
+# overlap. tools/validate.py checks this.
+bands:
+  - band: low
+    min_score: 1  # user-configurable parameter; proposed design value, not a measured result
+    max_score: 4  # user-configurable parameter; proposed design value, not a measured result
+    severity: sev4
+    escalation: "No escalation. The owner role reviews the risk at the weekly review."
+    escalate_to_role_key: null
+  - band: moderate
+    min_score: 5  # user-configurable parameter; proposed design value, not a measured result
+    max_score: 9  # user-configurable parameter; proposed design value, not a measured result
+    severity: sev3
+    escalation: "No escalation. The owner role records a mitigation within the phase."
+    escalate_to_role_key: null
+  - band: high
+    min_score: 10  # user-configurable parameter; proposed design value, not a measured result
+    max_score: 15  # user-configurable parameter; proposed design value, not a measured result
+    severity: sev2
+    escalation: "The implementation lead role reviews it and records a mitigation before the next gate."
+    escalate_to_role_key: implementation_lead
+  - band: critical
+    min_score: 16  # user-configurable parameter; proposed design value, not a measured result
+    max_score: 25  # user-configurable parameter; proposed design value, not a measured result
+    severity: sev1
+    escalation: "The delivery leadership role is told the same day. An open critical risk fails the no_open_critical_risks gate check."
+    escalate_to_role_key: delivery_leadership
+
+# Risk statuses are defined once, in schemas/risk.schema.json.
+status_rules:
+  - "resolved_at is set only when status is closed."
+  - "accepted means a named human chose to carry the risk; it stays visible and keeps its score."

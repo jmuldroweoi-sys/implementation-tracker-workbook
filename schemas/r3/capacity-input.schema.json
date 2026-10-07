@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:implementation-tracker-workbook:r3:0.1.0:capacity-input",
+  "title": "Capacity input",
+  "description": "One row of the workbook export that feeds capacity planning (CPI). It carries workload hours copied from R1 records and states how capacity planning must treat them. It never contains capacity, utilization, staffing need, hiring timing, or capacity gap; those belong to R2. Examples are illustrative examples using synthetic data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "capacity_input_id",
+    "period",
+    "project_id",
+    "source_entity_type",
+    "source_entity_id",
+    "role_id",
+    "workload_component_id",
+    "workload_type",
+    "planned_hours",
+    "actual_hours",
+    "unit",
+    "capacity_inclusion_method",
+    "source_repo",
+    "source_version",
+    "org_stage",
+    "export_ready_flag"
+  ],
+  "properties": {
+    "capacity_input_id": {
+      "type": "string",
+      "pattern": "^CPI-[0-9]{6}$"
+    },
+    "period": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
+      "description": "Month of the workload (YYYY-MM)."
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^PRJ-[0-9]{6}$"
+    },
+    "source_entity_type": {
+      "type": "string",
+      "enum": [
+        "task",
+        "request",
+        "handoff",
+        "phase"
+      ]
+    },
+    "source_entity_id": {
+      "type": "string",
+      "pattern": "^(TSK|REQ|HND|PHS)-[0-9]{6}$"
+    },
+    "role_id": {
+      "type": "string",
+      "pattern": "^ROL-[0-9]{6}$"
+    },
+    "workload_component_id": {
+      "type": "string",
+      "pattern": "^(TSK|PHS)-[0-9]{6}$",
+      "description": "The single unit of work the hours belong to: a task, or a phase for an informational summary. A component is authoritative in at most one row."
+    },
+    "workload_type": {
+      "type": "string",
+      "enum": [
+        "task_effort",
+        "request_handling",
+        "handoff_effort",
+        "phase_summary"
+      ]
+    },
+    "planned_hours": {
+      "type": "number",
+      "minimum": 0
+    },
+    "actual_hours": {
+      "type": "number",
+      "minimum": 0
+    },
+    "unit": {
+      "type": "string",
+      "const": "hours"
+    },
+    "capacity_inclusion_method": {
+      "type": "string",
+      "enum": [
+        "authoritative_workload",
+        "informational_only",
+        "excluded_to_prevent_double_count"
+      ],
+      "description": "authoritative_workload counts toward capacity once; informational_only is context that capacity math ignores; excluded_to_prevent_double_count marks work already counted through its task."
+    },
+    "source_repo": {
+      "type": "string",
+      "const": "implementation-operating-system",
+      "description": "The repository that owns the source record."
+    },
+    "source_version": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,40}$",
+      "description": "The pinned R1 commit the hours come from."
+    },
+    "org_stage": {
+      "type": "string",
+      "enum": [
+        "startup",
+        "early_scale",
+        "structured_growth",
+        "mature"
+      ]
+    },
+    "export_ready_flag": {
+      "type": "boolean"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source_entity_type": {
+            "const": "task"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "workload_type": {
+            "const": "task_effort"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "workload_type": {
+            "const": "phase_summary"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "capacity_inclusion_method": {
+            "const": "informational_only"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "source_entity_type": {
+            "enum": [
+              "request",
+              "handoff"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "capacity_inclusion_method": {
+            "enum": [
+              "informational_only",
+              "excluded_to_prevent_double_count"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "x-csv-columns": [
+    "capacity_input_id",
+    "period",
+    "project_id",
+    "source_entity_type",
+    "source_entity_id",
+    "role_id",
+    "workload_component_id",
+    "workload_type",
+    "planned_hours",
+    "actual_hours",
+    "unit",
+    "capacity_inclusion_method",
+    "source_repo",
+    "source_version",
+    "org_stage",
+    "export_ready_flag"
+  ],
+  "examples": [
+    {
+      "capacity_input_id": "CPI-000011",
+      "period": "2026-09",
+      "project_id": "PRJ-000002",
+      "source_entity_type": "task",
+      "source_entity_id": "TSK-000011",
+      "role_id": "ROL-000001",
+      "workload_component_id": "TSK-000011",
+      "workload_type": "task_effort",
+      "planned_hours": 4,
+      "actual_hours": 2,
+      "unit": "hours",
+      "capacity_inclusion_method": "authoritative_workload",
+      "source_repo": "implementation-operating-system",
+      "source_version": "9acd25a",
+      "org_stage": "early_scale",
+      "export_ready_flag": true
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+standard_version: "1.0.0"
+description: >-
+  Registry of every ID prefix used across the six implementation portfolio
+  repositories. IDs use the pattern TYPE-NNNNNN: a registered three-letter
+  prefix, a hyphen, and six digits. An ID never changes meaning, and a retired
+  prefix is never reused.
+id_pattern: "^[A-Z]{3}-[0-9]{6}$"
+
+repositories:
+  - repo: implementation-operating-system
+    code: R1
+    role: Lifecycle, operational data model, and this shared standard
+  - repo: implementation-capacity-and-org-design
+    code: R2
+    role: Capacity, staffing signals, organization design, cost-to-serve
+  - repo: implementation-tracker-workbook
+    code: R3
+    role: Spreadsheet reference implementation of R1
+  - repo: implementation-enablement-program
+    code: R4
+    role: Curriculum, training, proficiency, ramp
+  - repo: implementation-team-management-toolkit
+    code: R5
+    role: 1:1s, competencies, QA review, calibration, credential grants
+  - repo: implementation-ai-agent-framework
+    code: R6
+    role: Governed AI assistance workflow
+
+prefixes:
+  # R1 implementation-operating-system
+  - {prefix: PRJ, entity: project, owning_repo: implementation-operating-system, status: active, description: "An implementation project for one customer."}
+  - {prefix: PHS, entity: phase, owning_repo: implementation-operating-system, status: active, description: "One lifecycle phase instance within a project."}
+  - {prefix: MLS, entity: milestone, owning_repo: implementation-operating-system, status: active, description: "A dated checkpoint within a project."}
+  - {prefix: TSK, entity: task, owning_repo: implementation-operating-system, status: active, description: "A unit of work assigned to a role or person."}
+  - {prefix: GAT, entity: gate_assessment, owning_repo: implementation-operating-system, status: active, description: "A recorded assessment of a phase gate and its outcome."}
+  - {prefix: REQ, entity: request, owning_repo: implementation-operating-system, status: active, description: "A request for input, approval, or action that moves through a state machine."}
+  - {prefix: HND, entity: handoff, owning_repo: implementation-operating-system, status: active, description: "A transfer of responsibility between roles or teams."}
+  - {prefix: RSK, entity: risk, owning_repo: implementation-operating-system, status: active, description: "An uncertain event that could affect a project."}
+  - {prefix: ISS, entity: issue, owning_repo: implementation-operating-system, status: active, description: "A problem that is affecting a project now."}
+  - {prefix: DEC, entity: decision, owning_repo: implementation-operating-system, status: active, description: "A recorded project decision with its rationale."}
+  - {prefix: CFG, entity: configuration_item, owning_repo: implementation-operating-system, status: active, description: "A versioned unit of system configuration delivered to a customer."}
+  - {prefix: ENV, entity: environment, owning_repo: implementation-operating-system, status: active, description: "A system environment in which configuration is built, tested, or used."}
+  - {prefix: PRM, entity: promotion_record, owning_repo: implementation-operating-system, status: active, description: "A record of configuration moving from one environment to another."}
+  - {prefix: RDS, entity: readiness_scorecard, owning_repo: implementation-operating-system, status: active, description: "A launch readiness scorecard for a project."}
+  - {prefix: RDE, entity: readiness_entry, owning_repo: implementation-operating-system, status: active, description: "One evidence entry within a readiness scorecard."}
+  - {prefix: RHR, entity: rehearsal, owning_repo: implementation-operating-system, status: active, description: "A launch rehearsal (large-scale go-live pack)."}
+  - {prefix: CUT, entity: cutover_task, owning_repo: implementation-operating-system, status: active, description: "A task in a cutover runbook (large-scale go-live pack)."}
+  - {prefix: CCI, entity: command_center_issue, owning_repo: implementation-operating-system, status: active, description: "An issue logged in a launch command center (large-scale go-live pack)."}
+  - {prefix: IMP, entity: improvement_item, owning_repo: implementation-operating-system, status: active, description: "A logged improvement to the delivery method."}
+  - {prefix: RUL, entity: rule, owning_repo: implementation-operating-system, status: active, description: "A deterministic rule, such as an SLA, escalation, or risk rule."}
+  - {prefix: PRF, entity: profile, owning_repo: implementation-operating-system, status: active, description: "A configuration profile, such as an organization stage or complexity tier."}
+  - {prefix: SCN, entity: scenario, owning_repo: implementation-operating-system, status: active, description: "A labeled synthetic scenario used in examples."}
+  - {prefix: PER, entity: person, owning_repo: implementation-operating-system, status: active, description: "A person, identified by ID and role label only."}
+  - {prefix: ROL, entity: role, owning_repo: implementation-operating-system, status: active, description: "A role that people hold and that work is assigned to."}
+  - {prefix: EVT, entity: event, owning_repo: implementation-operating-system, status: active, description: "A record of something that happened, in the shared event contract."}
+  - {prefix: APR, entity: approval_record, owning_repo: implementation-operating-system, status: active, description: "A human decision to approve or reject a subject, in the shared approval schema."}
+  - {prefix: REC, entity: recommendation, owning_repo: implementation-operating-system, status: active, description: "A proposal that has no authority until a human approves it, in the shared recommendation schema."}
+  - {prefix: MTR, entity: metric_definition, owning_repo: implementation-operating-system, status: active, description: "The definition of a metric, in the shared metric-definition schema."}
+  - {prefix: MTV, entity: metric_value, owning_repo: implementation-operating-system, status: active, description: "A computed value of a metric. Reserved in standard 1.0.0; no shared schema yet."}
+
+  # R2 implementation-capacity-and-org-design
+  - {prefix: CAP, entity: capacity_snapshot, owning_repo: implementation-capacity-and-org-design, status: active, description: "Demand, supply, gap, and load ratio for one period."}
+  - {prefix: DMN, entity: demand_record, owning_repo: implementation-capacity-and-org-design, status: active, description: "Workload demand for one project and period, by one demand method."}
+  - {prefix: SUP, entity: supply_record, owning_repo: implementation-capacity-and-org-design, status: active, description: "Available hours for one person or role and period after allowances."}
+  - {prefix: RCP, entity: role_capacity, owning_repo: implementation-capacity-and-org-design, status: active, description: "Capacity aggregated by role for one period."}
+  - {prefix: STG, entity: staffing_trigger, owning_repo: implementation-capacity-and-org-design, status: active, description: "A configured condition that signals a staffing conversation is due."}
+  - {prefix: STR, entity: staffing_recommendation, owning_repo: implementation-capacity-and-org-design, status: active, description: "A proposed staffing action produced by a trigger. Never a hiring decision."}
+  - {prefix: ORG, entity: org_profile, owning_repo: implementation-capacity-and-org-design, status: active, description: "The organization-stage design selected for a team."}
+  - {prefix: TRD, entity: training_demand, owning_repo: implementation-capacity-and-org-design, status: active, description: "Training workload received from the enablement program for capacity planning."}
+  - {prefix: TRC, entity: training_capacity, owning_repo: implementation-capacity-and-org-design, status: active, description: "Trainer hours and session capacity for one period."}
+  - {prefix: GLS, entity: golive_support_demand, owning_repo: implementation-capacity-and-org-design, status: active, description: "Support hours needed around a launch."}
+  - {prefix: BLD, entity: builder_capacity, owning_repo: implementation-capacity-and-org-design, status: active, description: "Capacity of people who build configuration, for builder-model comparison."}
+  - {prefix: CTS, entity: cost_to_serve_record, owning_repo: implementation-capacity-and-org-design, status: active, description: "Effort-based cost-to-serve for one project or tier and period."}
+
+  # R3 implementation-tracker-workbook
+  - {prefix: WBK, entity: workbook, owning_repo: implementation-tracker-workbook, status: active, description: "Metadata for one copy of the tracker workbook."}
+  - {prefix: LKP, entity: lookup_entry, owning_repo: implementation-tracker-workbook, status: active, description: "One value in a workbook lookup list."}
+  - {prefix: CPI, entity: capacity_input, owning_repo: implementation-tracker-workbook, status: active, description: "One row of the workbook export that feeds capacity planning."}
+
+  # R4 implementation-enablement-program
+  - {prefix: TRK, entity: curriculum_track, owning_repo: implementation-enablement-program, status: active, description: "A sequence of courses for a role or audience."}
+  - {prefix: CRS, entity: course, owning_repo: implementation-enablement-program, status: active, description: "A set of lessons with shared objectives."}
+  - {prefix: LSN, entity: lesson, owning_repo: implementation-enablement-program, status: active, description: "One teachable unit with objectives and practice."}
+  - {prefix: LVR, entity: lesson_variant, owning_repo: implementation-enablement-program, status: active, description: "A customized version of a base lesson."}
+  - {prefix: CUR, entity: curriculum_item, owning_repo: implementation-enablement-program, status: active, description: "A catalog entry that places a lesson in a track."}
+  - {prefix: OBJ, entity: objective, owning_repo: implementation-enablement-program, status: active, description: "An observable learning objective."}
+  - {prefix: EXR, entity: exercise, owning_repo: implementation-enablement-program, status: active, description: "A practice activity tied to objectives."}
+  - {prefix: ASM, entity: assessment, owning_repo: implementation-enablement-program, status: active, description: "A set of assessment items that tests objectives."}
+  - {prefix: ASI, entity: assessment_item, owning_repo: implementation-enablement-program, status: active, description: "One item within an assessment."}
+  - {prefix: ASR, entity: assessment_result, owning_repo: implementation-enablement-program, status: active, description: "A person's scored result on one assessment."}
+  - {prefix: PFR, entity: proficiency_result, owning_repo: implementation-enablement-program, status: active, description: "A deterministic pass or not_yet proficiency outcome."}
+  - {prefix: RMD, entity: remediation, owning_repo: implementation-enablement-program, status: active, description: "Assigned follow-up learning after a not_yet result."}
+  - {prefix: RMP, entity: ramp_milestone, owning_repo: implementation-enablement-program, status: active, description: "A checkpoint on a new team member's ramp."}
+  - {prefix: CRQ, entity: certification_requirement, owning_repo: implementation-enablement-program, status: active, description: "A learning requirement that must be met before credential review."}
+  - {prefix: TRR, entity: trainer_readiness, owning_repo: implementation-enablement-program, status: active, description: "A record that a trainer has met the learning requirements to deliver a course."}
+  - {prefix: TEV, entity: training_environment, owning_repo: implementation-enablement-program, status: active, description: "A training environment that references an R1 environment."}
+  - {prefix: ENR, entity: environment_readiness, owning_repo: implementation-enablement-program, status: active, description: "Readiness of a training environment before a class."}
+  - {prefix: TDL, entity: training_deliverable, owning_repo: implementation-enablement-program, status: active, description: "A training material produced for a rollout, such as a guide."}
+  - {prefix: SES, entity: training_session, owning_repo: implementation-enablement-program, status: active, description: "One scheduled delivery of training."}
+  - {prefix: ATT, entity: attendance_record, owning_repo: implementation-enablement-program, status: active, description: "A person's attendance at one training session."}
+  - {prefix: JBA, entity: job_aid, owning_repo: implementation-enablement-program, status: active, description: "A short reference used on the job."}
+  - {prefix: PCR, entity: pilot_class_review, owning_repo: implementation-enablement-program, status: active, description: "A review of a lesson after a pilot class."}
+
+  # R5 implementation-team-management-toolkit
+  - {prefix: ONO, entity: one_on_one, owning_repo: implementation-team-management-toolkit, status: active, description: "A held 1:1 meeting record, without private notes."}
+  - {prefix: DVG, entity: development_goal, owning_repo: implementation-team-management-toolkit, status: active, description: "A development goal tied to a competency."}
+  - {prefix: CMP, entity: competency, owning_repo: implementation-team-management-toolkit, status: active, description: "A competency with behavioral anchors by level."}
+  - {prefix: CPA, entity: competency_assessment, owning_repo: implementation-team-management-toolkit, status: active, description: "A human assessment of a person against a competency."}
+  - {prefix: CPE, entity: competency_evidence, owning_repo: implementation-team-management-toolkit, status: active, description: "Behavioral evidence cited in a competency assessment."}
+  - {prefix: LDR, entity: leadership_cascade, owning_repo: implementation-team-management-toolkit, status: active, description: "A cascade of priorities from leadership to teams."}
+  - {prefix: GAL, entity: cascade_goal, owning_repo: implementation-team-management-toolkit, status: active, description: "One goal within a leadership cascade."}
+  - {prefix: QAR, entity: qa_review, owning_repo: implementation-team-management-toolkit, status: active, description: "A quality review of configuration or other work."}
+  - {prefix: TRO, entity: trainer_observation, owning_repo: implementation-team-management-toolkit, status: active, description: "A human observation of a trainer delivering a session."}
+  - {prefix: CAL, entity: calibration_session, owning_repo: implementation-team-management-toolkit, status: active, description: "A session in which reviewers calibrate proposed levels."}
+  - {prefix: CLR, entity: calibration_result, owning_repo: implementation-team-management-toolkit, status: active, description: "The calibrated result for one person from a calibration session."}
+  - {prefix: CDR, entity: credential_review, owning_repo: implementation-team-management-toolkit, status: active, description: "A human review of a person's readiness for a credential."}
+  - {prefix: CDG, entity: credential_grant, owning_repo: implementation-team-management-toolkit, status: active, description: "A human grant of a credential, backed by an approval record."}
+  - {prefix: APL, entity: appeal, owning_repo: implementation-team-management-toolkit, status: active, description: "A person's appeal of a people judgment."}
+  - {prefix: WLS, entity: workload_summary, owning_repo: implementation-team-management-toolkit, status: active, description: "Workload context for a person, sourced from capacity planning."}
+
+  # R6 implementation-ai-agent-framework
+  - {prefix: AGT, entity: agent, owning_repo: implementation-ai-agent-framework, status: active, description: "An AI agent defined by a manifest."}
+  - {prefix: TCT, entity: task_contract, owning_repo: implementation-ai-agent-framework, status: active, description: "A bounded task an agent may perform, with inputs, checks, and outputs."}
+  - {prefix: RUN, entity: task_run, owning_repo: implementation-ai-agent-framework, status: active, description: "One execution of a task contract."}
+  - {prefix: DSC, entity: data_scope, owning_repo: implementation-ai-agent-framework, status: active, description: "The records an agent is allowed to read for a task."}
+  - {prefix: MIP, entity: model_interface_profile, owning_repo: implementation-ai-agent-framework, status: active, description: "A vendor-neutral description of how a local model is called."}
+
+  # Retired. Never reused.
+  - {prefix: AIR, entity: ai_recommendation, owning_repo: implementation-operating-system, status: retired, description: "Retired. All recommendations use REC."}
+  - {prefix: AUD, entity: audit_record, owning_repo: implementation-operating-system, status: retired, description: "Retired. Audit records are events (EVT)."}
+  - {prefix: USR, entity: user, owning_repo: implementation-operating-system, status: retired, description: "Retired. People use PER."}
+  - {prefix: EXM, entity: executive_metric, owning_repo: implementation-capacity-and-org-design, status: retired, description: "Retired. Metric definitions use MTR."}
+  - {prefix: KPI, entity: kpi_definition, owning_repo: implementation-tracker-workbook, status: retired, description: "Retired. Metric definitions use MTR."}
+  - {prefix: ERL, entity: escalation_rule, owning_repo: implementation-operating-system, status: retired, description: "Retired. Rules use RUL."}
+  - {prefix: QAO, entity: trainer_qa_observation, owning_repo: implementation-enablement-program, status: retired, description: "Retired. Trainer observation uses TRO, owned by the team management toolkit."}
+  - {prefix: TCR, entity: trainer_credential, owning_repo: implementation-enablement-program, status: retired, description: "Retired. Credential grants use CDG, owned by the team management toolkit."}
+  - {prefix: CRT, entity: certification, owning_repo: implementation-enablement-program, status: retired, description: "Retired. Requirements use CRQ; grants use CDG."}

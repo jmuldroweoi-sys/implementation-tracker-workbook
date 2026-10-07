@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:implementation-operating-system:core:0.1.0:readiness-scorecard",
+  "title": "Readiness scorecard",
+  "description": "A deterministic launch readiness scorecard (RDS) with one entry (RDE) per canonical category. The score informs the readiness review; a named human records the launch decision in a gate assessment. R3 mirrors this calculation and never owns it. CSV export layout: one row per entry, with the scorecard fields repeated on each of its six rows. Examples are illustrative examples using synthetic data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "readiness_scorecard_id",
+    "project_id",
+    "assessment_purpose",
+    "assessed_at",
+    "calculation_version",
+    "categories",
+    "overall_score",
+    "incomplete_required_evidence_flag",
+    "schema_version"
+  ],
+  "properties": {
+    "readiness_scorecard_id": {
+      "type": "string",
+      "pattern": "^RDS-[0-9]{6}$",
+      "description": "Unique ID of the scorecard."
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^PRJ-[0-9]{6}$",
+      "description": "Project assessed."
+    },
+    "assessment_purpose": {
+      "type": "string",
+      "enum": [
+        "pre_assessment",
+        "launch_review"
+      ],
+      "description": "pre_assessment: an early check that shows gaps; it feeds no gate. launch_review: the scorecard reviewed at the launch gate."
+    },
+    "assessed_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "When the scorecard was calculated."
+    },
+    "calculation_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "calculation_version from config/readiness-weights.yaml."
+    },
+    "categories": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "readiness_entry_id",
+          "category",
+          "weight",
+          "criteria_total_count",
+          "criteria_met_count",
+          "achieved_rate",
+          "category_score",
+          "required_evidence_complete_flag"
+        ],
+        "properties": {
+          "readiness_entry_id": {
+            "type": "string",
+            "pattern": "^RDE-[0-9]{6}$",
+            "description": "Unique ID of this category entry."
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "people",
+              "process",
+              "technology",
+              "data",
+              "training",
+              "support"
+            ],
+            "description": "Category from standard/readiness-categories.yaml."
+          },
+          "weight": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Weight from config/readiness-weights.yaml at calculation time."
+          },
+          "criteria_total_count": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Criteria assessed in this category."
+          },
+          "criteria_met_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Criteria a person confirmed as met, with evidence."
+          },
+          "achieved_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Deterministic: criteria_met_count / criteria_total_count."
+          },
+          "category_score": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Deterministic: weight x achieved_rate, rounded half-up to 2 places."
+          },
+          "required_evidence_complete_flag": {
+            "type": "boolean",
+            "description": "True when the category's required evidence (config/readiness-weights.yaml) is present."
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{3}-[0-9]{6}$"
+            },
+            "uniqueItems": true,
+            "description": "IDs of the records that evidence the met criteria."
+          }
+        }
+      },
+      "description": "Exactly one entry per canonical readiness category."
+    },
+    "overall_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Deterministic: 100 x sum(weight x achieved_rate) / sum(weight), rounded half-up to 2 places. Informs the readiness review; it is not a launch decision."
+    },
+    "incomplete_required_evidence_flag": {
+      "type": "boolean",
+      "description": "True when any category's required_evidence_complete_flag is false."
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "0.1.0",
+      "description": "Version of the R1 core record schemas (0.1.0). Events carry the shared standard version instead."
+    }
+  },
+  "x-csv-layout": "one row per readiness entry; scorecard fields repeat on each of its six rows",
+  "x-csv-columns": [
+    "readiness_entry_id",
+    "readiness_scorecard_id",
+    "project_id",
+    "assessment_purpose",
+    "assessed_at",
+    "calculation_version",
+    "category",
+    "weight",
+    "criteria_total_count",
+    "criteria_met_count",
+    "achieved_rate",
+    "category_score",
+    "required_evidence_complete_flag",
+    "evidence_refs",
+    "overall_score",
+    "incomplete_required_evidence_flag",
+    "schema_version"
+  ],
+  "examples": [
+    {
+      "readiness_scorecard_id": "RDS-000003",
+      "project_id": "PRJ-000003",
+      "assessment_purpose": "launch_review",
+      "assessed_at": "2026-10-02T15:00:00Z",
+      "calculation_version": "1.0.0",
+      "categories": [
+        {
+          "readiness_entry_id": "RDE-000013",
+          "category": "people",
+          "weight": 15,
+          "criteria_total_count": 4,
+          "criteria_met_count": 4,
+          "achieved_rate": 1.0,
+          "category_score": 15.0,
+          "required_evidence_complete_flag": true,
+          "evidence_refs": [
+            "TSK-000028"
+          ]
+        },
+        {
+          "readiness_entry_id": "RDE-000014",
+          "category": "process",
+          "weight": 15,
+          "criteria_total_count": 4,
+          "criteria_met_count": 4,
+          "achieved_rate": 1.0,
+          "category_score": 15.0,
+          "required_evidence_complete_flag": true,
+          "evidence_refs": [
+            "MLS-000008"
+          ]
+        },
+        {
+          "readiness_entry_id": "RDE-000015",
+          "category": "technology",
+          "weight": 25,
+          "criteria_total_count": 5,
+          "criteria_met_count": 5,
+          "achieved_rate": 1.0,
+          "category_score": 25.0,
+          "required_evidence_complete_flag": true,
+          "evidence_refs": [
+            "MLS-000010",
+            "TSK-000022"
+          ]
+        },
+        {
+          "readiness_entry_id": "RDE-000016",
+          "category": "data",
+          "weight": 20,
+          "criteria_total_count": 4,
+          "criteria_met_count": 3,
+          "achieved_rate": 0.75,
+          "category_score": 15.0,
+          "required_evidence_complete_flag": true,
+          "evidence_refs": [
+            "TSK-000026"
+          ]
+        },
+        {
+          "readiness_entry_id": "RDE-000017",
+          "category": "training",
+          "weight": 15,
+          "criteria_total_count": 4,
+          "criteria_met_count": 3,
+          "achieved_rate": 0.75,
+          "category_score": 11.25,
+          "required_evidence_complete_flag": false,
+          "evidence_refs": [
+            "MLS-000011",
+            "TSK-000024"
+          ]
+        },
+        {
+          "readiness_entry_id": "RDE-000018",
+          "category": "support",
+          "weight": 10,
+          "criteria_total_count": 4,
+          "criteria_met_count": 4,
+          "achieved_rate": 1.0,
+          "category_score": 10.0,
+          "required_evidence_complete_flag": true,
+          "evidence_refs": [
+            "TSK-000025",
+            "TSK-000027"
+          ]
+        }
+      ],
+      "overall_score": 91.25,
+      "incomplete_required_evidence_flag": true,
+      "schema_version": "0.1.0"
+    }
+  ]
+}

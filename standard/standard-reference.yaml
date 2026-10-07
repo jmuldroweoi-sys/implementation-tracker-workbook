@@ -1,0 +1,12 @@
+# The R1 version this workbook implements. Updated only by tools/sync_r1_contracts.py.
+shared_standard_version: 1.0.0
+r1_repo: implementation-operating-system
+r1_commit: 9acd25a4673facf2b3cca2467142987548949ce3
+r1_repository_version: 0.1.0
+r1_core_schema_version: 0.1.0
+synchronized_at: '2026-10-06T23:21:51Z'
+schema_manifest: schemas/r1/manifest.yaml
+configuration_manifest: schemas/r1/manifest.yaml
+synthetic_manifest: data/synthetic/manifest.yaml
+consumer_repo: implementation-tracker-workbook
+rule: R1 is authoritative. R3 changes the pin only through this tool, then rebuilds and revalidates.
