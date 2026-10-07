@@ -22,6 +22,12 @@ Pinned R1 commit `9acd25a4673facf2b3cca2467142987548949ce3` (R1 repository versi
 
 - Reproducible build depended on whether the optional lxml package was installed: openpyxl writes XML differently with lxml, so CI (without lxml) rebuilt different bytes. The builder now always uses openpyxl's standard XML writer and refuses to build if lxml serialization is active. Regression test: `test_build_does_not_depend_on_optional_lxml`.
 
+### Changed (publication-readiness review)
+
+- Readability: columns are wide enough that no header name splits mid-word and task, risk, and issue text is readable; the KPI chart counts whole projects (axis steps of 1). No formula or value changed.
+- README: two screenshots rendered from the bundled synthetic workbook (`docs/images/`, produced by `tools/render_screenshots.py`); the R1/R3 relationship on the first screen; a "Where to find things" map; an author line; the Excel limitation stated plainly (Excel spot-check not performed; LibreOffice 24.2 verified).
+- `tools/validate.py` R30 stores its vendor and product list as SHA-256 hashes and matches whole words case-sensitively; tests cover the matcher.
+
 ### Not yet included
 
 - R4-owned tabs (curriculum, deliverables, training roster, proficiency) and scenario-pack tabs (cutover runbook, command center), planned for version 0.2 after their owning repositories exist. No release or tag exists yet.

@@ -150,12 +150,22 @@ def place_tables(sheet_specs: list[W.TableSpec], start_col: int = 1) -> dict[str
     return positions
 
 
+# Free-text columns that hold sentences get room to show them without wrapping.
+WIDE_TEXT_COLUMNS = {"name": 40, "title": 34, "description": 44}
+
+
+def display_width(column) -> float:
+    """Column width that never splits a header name mid-word and gives free text room.
+    Header names are capped at 34 characters of width; longer ones wrap at underscores."""
+    return max(column.width, min(len(column.name) + 3, 34), WIDE_TEXT_COLUMNS.get(column.name, 0))
+
+
 def write_table(ws, spec: W.TableSpec, rows: list[dict], first_col: int, wb, defined: list) -> tuple[int, int]:
     ws.cell(row=HEADER_ROW - 1, column=first_col, value=spec.title).font = SUBTITLE
     for j, column in enumerate(spec.columns):
         c = ws.cell(row=HEADER_ROW, column=first_col + j, value=column.name)
         style_header(c, column.kind)
-        ws.column_dimensions[get_column_letter(first_col + j)].width = column.width
+        ws.column_dimensions[get_column_letter(first_col + j)].width = display_width(column)
     data = rows if rows else [{}]
     for i, record in enumerate(data):
         r = FIRST_ROW + i
@@ -350,6 +360,9 @@ def build(output: Path, inputs: dict | None = None, settings: dict | None = None
     chart.type = "bar"
     chart.title = "Projects by Current Phase"
     chart.y_axis.title = "Projects"
+    chart.y_axis.majorUnit = 1  # whole projects, never fractional ticks
+    chart.y_axis.scaling.min = 0
+    chart.y_axis.number_format = "0"
     chart.legend = None
     data = Reference(ws, min_col=ps["first_col"] + 2, min_row=HEADER_ROW, max_row=ps["last_row"])
     cats = Reference(ws, min_col=ps["first_col"] + 1, min_row=FIRST_ROW, max_row=ps["last_row"])

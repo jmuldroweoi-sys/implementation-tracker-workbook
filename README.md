@@ -2,11 +2,17 @@
 
 A macro-free implementation tracker that applies the R1 operating model through deterministic spreadsheet formulas, synthetic data, and portable exports. One implementation professional can open one workbook and run implementation work with the R1 lifecycle, schemas, rules, and event contract.
 
-> **Status: version 0.1.0, pre-release, not tagged.** This is a reference implementation of R1 ([`implementation-operating-system`](standard/standard-reference.yaml)). It has not been historically deployed as this exact workbook. The bundled synthetic examples are not customer data, and nothing here reports a measured result.
+> **Status: version 0.1.0, pre-release, not tagged.** This is a reference implementation of R1 ([`implementation-operating-system`](https://github.com/jmuldroweoi-sys/implementation-operating-system)), pinned in [`standard/standard-reference.yaml`](standard/standard-reference.yaml). It has not been historically deployed as this exact workbook. The bundled synthetic examples are not customer data, and nothing here reports a measured result.
+
+R1 answers *what operating model implementation work should follow*. This workbook answers *how one implementation professional can run that model today*: open one file, update the rows that changed this week, and read what is late, blocked, risky, or not ready.
+
+![KPI Summary tab of the bundled synthetic workbook: KPI counts, projects by phase, requests by status, readiness by project, and a projects-by-phase bar chart](docs/images/kpi-summary.png)
 
 ## Purpose
 
 Prove that the R1 operating model is usable, not just documented. The workbook implements R1's records, statuses, rules, and calculations as spreadsheet tables and formulas, without reinterpreting any of them, so a person can run real projects in it and every number can be traced back to R1.
+
+Designed and maintained by Jared Muldrow, an implementation and onboarding professional who runs delivery work hands-on and designs the systems, controls, and tooling around it. That experience informed the design as inspiration only: no employer document, data, or wording is used here.
 
 ## Who it is for
 
@@ -30,7 +36,11 @@ The pin is in [`standard/standard-reference.yaml`](standard/standard-reference.y
 
 ## Workbook screenshot and visual description
 
-There is no screenshot in this version; this is a description of what opens.
+The KPI Summary picture above and the Tasks picture below are rendered from the bundled synthetic workbook by [`tools/render_screenshots.py`](tools/render_screenshots.py) (LibreOffice prints a copy, so every value is a calculated formula result).
+
+![Tasks tab: dark blue headers on columns you edit, grey headers and cells on formula columns, and highlighted overdue tasks and missing event evidence](docs/images/tasks-tab.png)
+
+What opens:
 
 - **README** shows a plain-language guide in column A and a settings table (`tblWorkbookSettings`) with the editable `calculation_as_of_at`, `event_reconciliation_from_at`, `selected_org_stage`, and `operating_mode` cells shaded yellow.
 - **Record tabs** (Projects to Event Log) show Excel Tables starting at row 4, side by side on tabs with more than one table. Dark blue headers mark columns you edit, grey headers and grey cells mark formulas, and a light red or amber fill marks overdue tasks, due escalations, failed checks, and missing event evidence.
@@ -125,9 +135,22 @@ The verifier recalculates the workbook in headless LibreOffice Calc and checks e
 
 [docs/practical-workflow.md](docs/practical-workflow.md) walks through one week with Synthetic Project A in 14 steps, from opening the workbook to verifying it, naming the tab, action, rule, authoritative source, event implications, and downstream consumer of each step.
 
+### Where to find things
+
+| You want to | Open |
+|---|---|
+| Use the workbook week to week | [docs/starter-mode.md](docs/starter-mode.md), [docs/workbook-guide.md](docs/workbook-guide.md), [docs/practical-workflow.md](docs/practical-workflow.md) |
+| Look up any column | [docs/data-dictionary.md](docs/data-dictionary.md) |
+| Read or audit a formula | [FORMULAS.md](FORMULAS.md), [verification/formula-audit.md](verification/formula-audit.md) |
+| Bring in your own data, or take it out | [IMPORT-GUIDE.md](IMPORT-GUIDE.md), [docs/export-model.md](docs/export-model.md), [exports/README.md](exports/README.md) |
+| Understand events and the other repositories | [docs/event-capture-model.md](docs/event-capture-model.md), [docs/portfolio-integration.md](docs/portfolio-integration.md) |
+| Check the synthetic data and its sources | [data/synthetic/r1/README.md](data/synthetic/r1/README.md), [data/synthetic/r3/README.md](data/synthetic/r3/README.md), [verification/referential-integrity.md](verification/referential-integrity.md) |
+| See what was verified for this version | [verification/R3-V0.1-CHECKLIST.md](verification/R3-V0.1-CHECKLIST.md), [verification/portability-checklist.md](verification/portability-checklist.md), [verification/release-gate.md](verification/release-gate.md) |
+| Propose a change | [CONTRIBUTING.md](CONTRIBUTING.md), [CHANGELOG.md](CHANGELOG.md) |
+
 ## Limitations
 
-- Recalculation is verified in LibreOffice Calc 24.2. The workbook targets Excel and uses only long-standing functions and standard Excel Tables, but this build was not recalculated in Excel itself. See [verification/portability-checklist.md](verification/portability-checklist.md).
+- Recalculation is verified in LibreOffice Calc 24.2. The workbook targets Excel and uses only long-standing functions and standard Excel Tables, but this build was not opened or recalculated in Microsoft Excel itself (Excel spot-check not performed; LibreOffice 24.2 verified). See [verification/portability-checklist.md](verification/portability-checklist.md).
 - Dates and timestamps are ISO 8601 text, not spreadsheet date values. This keeps exports exact; date pickers and date arithmetic in the grid are not available.
 - Events are appended or imported by a person; nothing is captured automatically. The bundled R1 event file is a sample, so the reconciliation view lists 27 material changes in the synthetic window that have no event row.
 - Gate assessments and handoffs that R1 holds only as events (not as full records) are not invented; only `GAT-000002` and `HND-000002` appear as table rows.
@@ -136,7 +159,7 @@ The verifier recalculates the workbook in headless LibreOffice Calc and checks e
 
 ## AI assistance
 
-AI assisted with this repository: Claude (Anthropic) helped structure the documentation, draft portions of the implementation (the builder, verifier, validator, and formulas), and plan and draft the testing and build steps, under the author's direction. A human reviewed and approved all public content. Deterministic spreadsheet formulas, not AI, produce every operational calculation in the workbook, and every formula is checked against R1's own rule code by automated tests.
+AI assisted with this repository: Claude (Anthropic) helped structure the documentation, draft portions of the implementation (the builder, verifier, validator, and formulas), and plan and draft the testing and build steps, under the author's direction. Every release is reviewed and approved by the author before it is published, and that review is recorded in [`verification/release-gate.md`](verification/release-gate.md). Deterministic spreadsheet formulas, not AI, produce every operational calculation in the workbook, and every formula is checked against R1's own rule code by automated tests.
 
 ## Versioning
 
